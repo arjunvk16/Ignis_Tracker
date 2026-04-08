@@ -48,7 +48,6 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen pb-24">
 
-    <!-- Mobile Header -->
     <header class="glass sticky top-0 z-30 border-b border-slate-200 dark:border-slate-800 px-4 py-3">
         <div class="max-w-5xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
@@ -64,12 +63,9 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="max-w-5xl mx-auto px-4 pt-6">
         
-        <!-- Dashboard View -->
         <div id="view-dashboard" class="space-y-6">
-            <!-- Total Card -->
             <div class="bg-gradient-to-br from-blue-600 to-blue-700 p-6 rounded-[2rem] text-white shadow-xl shadow-blue-500/20 relative overflow-hidden">
                 <i class="fa-solid fa-wallet absolute -right-4 -bottom-4 text-8xl opacity-10"></i>
                 <p class="text-xs font-bold opacity-80 uppercase tracking-widest">Total Investment</p>
@@ -86,7 +82,6 @@
                 </div>
             </div>
 
-            <!-- Stats Grid (Horizontal Scroll on Mobile) -->
             <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                 <div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
                     <p class="text-[10px] font-bold text-slate-400 uppercase">Fuel</p>
@@ -102,7 +97,6 @@
                 </div>
             </div>
 
-            <!-- Charts -->
             <div class="space-y-4">
                 <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-100 dark:border-slate-800">
                     <h3 class="text-xs font-bold uppercase text-slate-400 mb-4">Expense Distribution</h3>
@@ -115,7 +109,6 @@
             </div>
         </div>
 
-        <!-- Add Entry View -->
         <div id="view-add" class="hidden space-y-6">
             <h2 class="text-2xl font-black">Add Record</h2>
             <form id="expense-form" class="space-y-4">
@@ -127,10 +120,18 @@
                             <option value="wash" class="text-slate-800">🧼 Wash</option>
                             <option value="service" class="text-slate-800">⚙️ Service</option>
                             <option value="tyre_pressure" class="text-slate-800">💨 Tyre Air</option>
+                            <option value="wheel_alignment" class="text-slate-800">🔧 Wheel Alignment</option>
+                            <option value="wheel_rotation" class="text-slate-800">🔄 Wheel Rotation</option>
+                            <option value="tyre_change" class="text-slate-800">🛞 Tyre Change</option>
+                            <option value="wiper_change" class="text-slate-800">🌧️ Wiper Change</option>
                             <option value="insurance" class="text-slate-800">🛡️ Insurance</option>
                             <option value="other" class="text-slate-800">📝 Other</option>
                         </select>
                     </div>
+
+                    <div id="dynamic-fields" class="hidden bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
+                        </div>
+
                     <div class="flex gap-4">
                         <div class="flex-1 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
                             <label class="text-[10px] font-bold text-slate-400 uppercase">Date</label>
@@ -141,6 +142,7 @@
                             <input type="number" id="km" required placeholder="12500" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white">
                         </div>
                     </div>
+                    
                     <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
                         <label class="text-[10px] font-bold text-slate-400 uppercase">Cost (₹)</label>
                         <input type="number" id="cost" placeholder="0" class="w-full bg-transparent font-black text-2xl text-blue-600 outline-none dark:text-blue-400">
@@ -152,19 +154,16 @@
             </form>
         </div>
 
-        <!-- History View -->
         <div id="view-history" class="hidden space-y-4">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-2xl font-black">Timeline</h2>
                 <span class="text-xs font-bold text-slate-400" id="history-count">0 items</span>
             </div>
             <div id="history-list" class="space-y-3">
-                <!-- Records populated here via JS -->
-            </div>
+                </div>
         </div>
     </main>
 
-    <!-- Bottom Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 glass border-t border-slate-200 dark:border-slate-800 px-6 py-4 flex justify-between items-center z-40">
         <button onclick="switchTab('dashboard')" id="btn-dash" class="relative flex flex-col items-center gap-1 tab-active">
             <i class="fa-solid fa-house-chimney text-xl"></i>
@@ -181,20 +180,16 @@
         </button>
     </nav>
 
-    <!-- Custom Animated Loading Overlay -->
     <div id="loading-overlay" class="fixed inset-0 bg-slate-50 dark:bg-slate-950 z-50 flex flex-col items-center justify-center transition-opacity duration-500">
         <div class="relative flex items-center justify-center mb-6 w-32 h-16">
-            <!-- Exhaust Smoke -->
             <div class="absolute left-4 top-8 w-3 h-3 bg-slate-300 dark:bg-slate-600 rounded-full animate-smoke-1 blur-[1px]"></div>
             <div class="absolute left-2 top-7 w-2 h-2 bg-slate-300 dark:bg-slate-600 rounded-full animate-smoke-2 blur-[1px]"></div>
             <div class="absolute left-6 top-6 w-4 h-4 bg-slate-300 dark:bg-slate-600 rounded-full animate-smoke-3 blur-[2px]"></div>
 
-            <!-- Bouncing Car -->
             <div class="absolute right-6 animate-car">
                 <i class="fa-solid fa-car-side text-6xl text-blue-600 drop-shadow-lg"></i>
             </div>
             
-            <!-- Road Line -->
             <div class="absolute bottom-0 left-0 right-0 h-1 bg-slate-200 dark:bg-slate-800 rounded overflow-hidden">
                 <div class="w-full h-full bg-slate-400 dark:bg-slate-500 origin-left animate-pulse"></div>
             </div>
@@ -202,7 +197,6 @@
         <p class="font-black text-slate-400 tracking-widest uppercase text-xs animate-pulse">Loading Ignis Zeta...</p>
     </div>
 
-    <!-- Application Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -264,6 +258,34 @@
         // Date input default
         document.getElementById('date').valueAsDate = new Date();
 
+        // Dynamic Form Fields Logic
+        const categorySelect = document.getElementById('category');
+        const dynamicFields = document.getElementById('dynamic-fields');
+
+        categorySelect.addEventListener('change', (e) => {
+            const val = e.target.value;
+            dynamicFields.innerHTML = ''; // clear old
+            dynamicFields.classList.remove('hidden');
+
+            if (val === 'wiper_change') {
+                dynamicFields.innerHTML = `
+                    <label class="text-[10px] font-bold text-slate-400 uppercase">Wiper Position</label>
+                    <select id="dyn_wiper_pos" class="w-full bg-transparent font-bold py-2 outline-none dark:text-white appearance-none">
+                        <option value="Front Only" class="text-slate-800">Front Both</option>
+                        <option value="Back Only" class="text-slate-800">Back/Rear Only</option>
+                        <option value="Front and Back" class="text-slate-800">Front & Back (All)</option>
+                    </select>
+                `;
+            } else if (val === 'tyre_change') {
+                dynamicFields.innerHTML = `
+                    <label class="text-[10px] font-bold text-slate-400 uppercase">Number of Tyres Replaced</label>
+                    <input type="number" id="dyn_tyre_qty" min="1" max="5" value="4" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white">
+                `;
+            } else {
+                dynamicFields.classList.add('hidden');
+            }
+        });
+
         // Data Management (Firebase)
         const init = async () => {
             try {
@@ -283,15 +305,28 @@
 
                 document.getElementById('expense-form').onsubmit = async (e) => {
                     e.preventDefault();
-                    await addDoc(colRef, {
-                        category: document.getElementById('category').value,
+                    
+                    // Gather core data
+                    const dataObj = {
+                        category: categorySelect.value,
                         date: document.getElementById('date').value,
                         km: parseInt(document.getElementById('km').value) || 0,
                         cost: parseFloat(document.getElementById('cost').value) || 0,
-                    });
+                    };
+
+                    // Check for dynamic inputs
+                    if (dataObj.category === 'wiper_change') {
+                        dataObj.details = document.getElementById('dyn_wiper_pos')?.value;
+                    } else if (dataObj.category === 'tyre_change') {
+                        dataObj.details = document.getElementById('dyn_tyre_qty')?.value + " Tyres";
+                    }
+
+                    await addDoc(colRef, dataObj);
+                    
                     switchTab('dashboard');
                     e.target.reset();
                     document.getElementById('date').valueAsDate = new Date();
+                    dynamicFields.classList.add('hidden');
                 };
 
                 window.del = async (id) => {
@@ -308,7 +343,16 @@
         };
 
         const categoryEmojis = {
-            fuel: '⛽', wash: '🧼', service: '⚙️', tyre_pressure: '💨', insurance: '🛡️', other: '📝'
+            fuel: '⛽', 
+            wash: '🧼', 
+            service: '⚙️', 
+            tyre_pressure: '💨', 
+            wheel_alignment: '🔧', 
+            wheel_rotation: '🔄', 
+            tyre_change: '🛞', 
+            wiper_change: '🌧️', 
+            insurance: '🛡️', 
+            other: '📝'
         };
 
         function updateUI() {
@@ -324,7 +368,12 @@
 
                 // Create Mobile Cards for History
                 const emoji = categoryEmojis[item.category] || '📝';
-                const catName = item.category.replace('_', ' ');
+                let catName = item.category.replace('_', ' ');
+                
+                // Append sub-details if they exist (like "Front Only" for wipers)
+                if(item.details) {
+                    catName += ` (${item.details})`;
+                }
 
                 historyList.innerHTML += `
                     <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 flex justify-between items-center group">
@@ -376,7 +425,7 @@
                     labels: Object.keys(catData).map(k => k.replace('_', ' ').toUpperCase()),
                     datasets: [{ 
                         data: Object.values(catData), 
-                        backgroundColor: ['#3b82f6', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#64748b'], 
+                        backgroundColor: ['#3b82f6', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#64748b', '#0ea5e9', '#f43f5e'], 
                         borderWidth: 0 
                     }]
                 },
