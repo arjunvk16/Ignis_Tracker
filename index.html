@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGNIS Zeta - Pro Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0f172a',
+                        darkCard: '#1e293b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.3s ease; }
+        
+        .dark body { background-color: #0f172a; color: #f1f5f9; }
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+        .dark .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); }
+        
+        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1); }
+        
+        .tab-active { border-bottom-color: #3b82f6; color: #3b82f6; font-weight: 700; }
+        
+        /* Interactive Input effects */
+        input:focus, select:focus { transform: scale(1.01); transition: all 0.2s; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- Header -->
+    <header class="glass shadow-sm border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 transition-colors">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 text-white p-2.5 rounded-xl shadow-lg shadow-blue-500/30">
+                    <i class="fa-solid fa-car-side text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg dark:text-white leading-tight">IGNIS Hub</h1>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Zeta Edition</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-all text-slate-600 dark:text-slate-300">
+                    <i class="fa-solid fa-moon text-lg dark:hidden"></i>
+                    <i class="fa-solid fa-sun text-lg hidden dark:block"></i>
+                </button>
+                <div class="text-right">
+                    <p class="text-[10px] text-slate-400 uppercase font-bold">Total Spent</p>
+                    <p class="font-black text-xl text-blue-600 dark:text-blue-400" id="total-spent">₹0</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-5xl mx-auto px-4 py-8 w-full grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- Form Column -->
+        <div class="md:col-span-1">
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 sticky top-24">
+                <h2 class="text-lg font-bold mb-6 flex items-center gap-2 dark:text-white">
+                    <span class="w-2 h-6 bg-blue-500 rounded-full"></span>
+                    New Entry
+                </h2>
+                <form id="expense-form" class="space-y-4">
+                    <div>
+                        <label class="text-xs font-bold text-slate-400 uppercase mb-1 block">Activity</label>
+                        <select id="category" required class="w-full rounded-xl border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white border p-3 text-sm focus:ring-4 focus:ring-blue-500/20 outline-none appearance-none">
+                            <option value="fuel">⛽ Fuel (Petrol)</option>
+                            <option value="wash">🧼 Car Wash</option>
+                            <option value="service">⚙️ Car Service</option>
+                            <option value="tyre_pressure">💨 Tyre Pressure</option>
+                            <option value="insurance">🛡️ Insurance</option>
+                            <option value="other">📝 Other</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-bold text-slate-400 uppercase mb-1 block">Date</label>
+                            <input type="date" id="date" required class="w-full rounded-xl border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white border p-3 text-sm focus:ring-4 focus:ring-blue-500/20 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-400 uppercase mb-1 block">Odo (km)</label>
+                            <input type="number" id="km" required placeholder="000" class="w-full rounded-xl border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white border p-3 text-sm focus:ring-4 focus:ring-blue-500/20 outline-none">
+                        </div>
+                    </div>
+
+                    <div id="cost-container">
+                        <label class="text-xs font-bold text-slate-400 uppercase mb-1 block">Cost (₹)</label>
+                        <input type="number" id="cost" placeholder="0.00" class="w-full rounded-xl border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white border p-3 text-sm focus:ring-4 focus:ring-blue-500/20 outline-none">
+                    </div>
+
+                    <div id="dynamic-fields" class="space-y-4 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl hidden border border-dashed border-slate-200 dark:border-slate-700"></div>
+
+                    <button type="submit" id="submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-500/40 active:scale-95 flex justify-center items-center gap-2 mt-4">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span>Save Record</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard Column -->
+        <div class="md:col-span-2 space-y-8">
+            <!-- Tabs -->
+            <div class="flex gap-2 p-1 bg-slate-200/50 dark:bg-slate-800 rounded-2xl w-fit">
+                <button onclick="switchTab('dashboard')" id="tab-dashboard" class="px-6 py-2.5 rounded-xl font-bold text-sm transition-all tab-active bg-white dark:bg-slate-700 shadow-sm">Dashboard</button>
+                <button onclick="switchTab('history')" id="tab-history" class="px-6 py-2.5 rounded-xl font-bold text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-all">Timeline</button>
+            </div>
+
+            <div id="view-dashboard" class="space-y-8 animate-in fade-in duration-500">
+                <!-- Grid Stats -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl card-hover border border-slate-100 dark:border-slate-700">
+                        <i class="fa-solid fa-gauge-high text-blue-500 mb-3 block"></i>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Mileage</p>
+                        <p class="font-black text-lg dark:text-white" id="stat-odo">0 km</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl card-hover border border-slate-100 dark:border-slate-700">
+                        <i class="fa-solid fa-gas-pump text-orange-500 mb-3 block"></i>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Fuel</p>
+                        <p class="font-black text-lg dark:text-white" id="stat-fuel">₹0</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl card-hover border border-slate-100 dark:border-slate-700">
+                        <i class="fa-solid fa-screwdriver-wrench text-emerald-500 mb-3 block"></i>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Service</p>
+                        <p class="font-black text-lg dark:text-white" id="stat-service">₹0</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl card-hover border border-slate-100 dark:border-slate-700">
+                        <i class="fa-solid fa-list-check text-purple-500 mb-3 block"></i>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Entries</p>
+                        <p class="font-black text-lg dark:text-white" id="stat-count">0</p>
+                    </div>
+                </div>
+
+                <!-- Visualization -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-100 dark:border-slate-700">
+                        <h3 class="text-xs font-black uppercase text-slate-400 mb-6 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie"></i> Cost Split
+                        </h3>
+                        <div class="h-64"><canvas id="categoryChart"></canvas></div>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-100 dark:border-slate-700">
+                        <h3 class="text-xs font-black uppercase text-slate-400 mb-6 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line"></i> Spending Trend
+                        </h3>
+                        <div class="h-64"><canvas id="timelineChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-history" class="hidden animate-in slide-in-from-bottom-4 duration-500">
+                <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 overflow-hidden shadow-xl">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 dark:bg-slate-900/50 text-slate-400 font-bold uppercase text-[10px]">
+                            <tr>
+                                <th class="px-6 py-4">Date</th>
+                                <th class="px-6 py-4">Category</th>
+                                <th class="px-6 py-4">Odometer</th>
+                                <th class="px-6 py-4">Cost</th>
+                                <th class="px-6 py-4 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
+                    </table>
+                    <div id="empty-state" class="hidden p-20 text-center text-slate-400">
+                        <i class="fa-solid fa-wind text-5xl mb-4 opacity-20"></i>
+                        <p class="font-bold">No data points yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="loading-overlay" class="fixed inset-0 bg-white dark:bg-darkBg z-50 flex flex-col items-center justify-center">
+        <div class="relative">
+            <div class="w-20 h-20 border-4 border-blue-100 dark:border-slate-800 rounded-full"></div>
+            <div class="w-20 h-20 border-4 border-t-blue-600 rounded-full animate-spin absolute top-0 left-0"></div>
+        </div>
+        <p class="mt-6 font-black text-slate-400 tracking-widest uppercase text-xs">Loading Ignis Zeta...</p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // CONFIG (Keeping your keys)
+        const userProvidedConfig = {
+            apiKey: "AIzaSyAJ9K9fQ0ThMB7aXB6qNHr3_yLUdqJgnCM",
+            authDomain: "my-chain-reaction-game.firebaseapp.com",
+            projectId: "my-chain-reaction-game",
+            storageBucket: "my-chain-reaction-game.appspot.com",
+            messagingSenderId: "32751418407",
+            appId: "1:32751418407:web:ff8244007ef2b099d56202"
+        };
+
+        const APP_ID = 'ignis_tracker_v2';
+        const app = initializeApp(userProvidedConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let expensesData = [];
+        let categoryChartInstance = null;
+        let timelineChartInstance = null;
+
+        // Theme Toggle Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+
+        if (localStorage.getItem('theme') === 'dark') {
+            html.classList.add('dark');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+            updateCharts(); // Refresh chart colors
+        });
+
+        // Tab Management
+        window.switchTab = (tabId) => {
+            const dash = document.getElementById('view-dashboard');
+            const hist = document.getElementById('view-history');
+            const tDash = document.getElementById('tab-dashboard');
+            const tHist = document.getElementById('tab-history');
+
+            if (tabId === 'dashboard') {
+                dash.classList.remove('hidden');
+                hist.classList.add('hidden');
+                tDash.className = "px-6 py-2.5 rounded-xl font-bold text-sm transition-all bg-white dark:bg-slate-700 shadow-sm text-blue-600";
+                tHist.className = "px-6 py-2.5 rounded-xl font-bold text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-all";
+            } else {
+                dash.classList.add('hidden');
+                hist.classList.remove('hidden');
+                tHist.className = "px-6 py-2.5 rounded-xl font-bold text-sm transition-all bg-white dark:bg-slate-700 shadow-sm text-blue-600";
+                tDash.className = "px-6 py-2.5 rounded-xl font-bold text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-all";
+            }
+        };
+
+        // UI Updates with dynamic colors
+        const updateCharts = () => {
+            const isDark = html.classList.contains('dark');
+            const textColor = isDark ? '#94a3b8' : '#64748b';
+            const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+
+            const catTotals = {};
+            expensesData.forEach(item => { if(item.cost > 0) catTotals[item.category] = (catTotals[item.category] || 0) + item.cost; });
+
+            // Category Chart
+            const ctxCat = document.getElementById('categoryChart').getContext('2d');
+            if (categoryChartInstance) categoryChartInstance.destroy();
+            categoryChartInstance = new Chart(ctxCat, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(catTotals),
+                    datasets: [{
+                        data: Object.values(catTotals),
+                        backgroundColor: ['#3b82f6', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#64748b'],
+                        borderWidth: 0,
+                        hoverOffset: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { position: 'bottom', labels: { color: textColor, font: { weight: 'bold' }, usePointStyle: true } } 
+                    },
+                    cutout: '65%'
+                }
+            });
+
+            // Timeline Chart
+            const timeMap = {};
+            [...expensesData].reverse().forEach(item => {
+                const date = new Date(item.date).toLocaleDateString('en-US', { month: 'short' });
+                timeMap[date] = (timeMap[date] || 0) + item.cost;
+            });
+
+            const ctxTime = document.getElementById('timelineChart').getContext('2d');
+            if (timelineChartInstance) timelineChartInstance.destroy();
+            timelineChartInstance = new Chart(ctxTime, {
+                type: 'line',
+                data: {
+                    labels: Object.keys(timeMap),
+                    datasets: [{
+                        label: 'Spent',
+                        data: Object.values(timeMap),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 6,
+                        pointBackgroundColor: '#3b82f6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { grid: { color: gridColor }, ticks: { color: textColor } },
+                        x: { grid: { display: false }, ticks: { color: textColor } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        };
+
+        // CRUD Logic (Firebase)
+        const init = async () => {
+            const loading = document.getElementById('loading-overlay');
+            const user = await signInAnonymously(auth);
+            const colRef = collection(db, 'artifacts', APP_ID, 'users', user.user.uid, 'ignis_data');
+
+            onSnapshot(colRef, (snapshot) => {
+                expensesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                expensesData.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                // Stats Update
+                let total = 0, fuel = 0, service = 0, maxKm = 0;
+                expensesData.forEach(i => {
+                    total += i.cost || 0;
+                    if(i.category === 'fuel') fuel += i.cost;
+                    if(i.category === 'service') service += i.cost;
+                    if(i.km > maxKm) maxKm = i.km;
+                });
+
+                document.getElementById('total-spent').innerText = `₹${total.toLocaleString()}`;
+                document.getElementById('stat-odo').innerText = `${maxKm.toLocaleString()} km`;
+                document.getElementById('stat-fuel').innerText = `₹${fuel.toLocaleString()}`;
+                document.getElementById('stat-service').innerText = `₹${service.toLocaleString()}`;
+                document.getElementById('stat-count').innerText = expensesData.length;
+
+                // Table Render
+                const tbody = document.getElementById('history-table-body');
+                tbody.innerHTML = expensesData.map(item => `
+                    <tr class="group hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                        <td class="px-6 py-4 font-medium dark:text-slate-300">${new Date(item.date).toLocaleDateString()}</td>
+                        <td class="px-6 py-4"><span class="capitalize px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-xs font-bold">${item.category}</span></td>
+                        <td class="px-6 py-4 dark:text-slate-400">${item.km.toLocaleString()} km</td>
+                        <td class="px-6 py-4 font-black text-blue-600">₹${item.cost.toLocaleString()}</td>
+                        <td class="px-6 py-4 text-right">
+                            <button onclick="window.deleteRec('${item.id}')" class="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                updateCharts();
+                loading.classList.add('hidden');
+            });
+
+            window.deleteRec = async (id) => {
+                if(confirm('Delete?')) await deleteDoc(doc(db, 'artifacts', APP_ID, 'users', user.user.uid, 'ignis_data', id));
+            };
+
+            document.getElementById('expense-form').onsubmit = async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('submit-btn');
+                btn.disabled = true;
+                const data = {
+                    category: document.getElementById('category').value,
+                    date: document.getElementById('date').value,
+                    km: parseInt(document.getElementById('km').value) || 0,
+                    cost: parseFloat(document.getElementById('cost').value) || 0,
+                    createdAt: new Date().toISOString()
+                };
+                await addDoc(colRef, data);
+                e.target.reset();
+                btn.disabled = false;
+            };
+        };
+
+        init();
+    </script>
+</body>
+</html>
