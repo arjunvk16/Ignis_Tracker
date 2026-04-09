@@ -97,6 +97,37 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color
 </div>
 </div>
 
+<!-- NEW: Category Insights Tool -->
+<div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800">
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xs font-bold uppercase text-slate-400 flex items-center gap-2">
+            <i class="fa-solid fa-magnifying-glass-chart"></i> Category Insights
+        </h3>
+        <select id="insight-category" class="bg-slate-100 dark:bg-slate-800 text-xs font-bold py-1.5 px-3 rounded-lg outline-none dark:text-white appearance-none cursor-pointer border border-slate-200 dark:border-slate-700">
+            <option value="fuel">⛽ Fuel</option>
+            <option value="wash">🧼 Wash</option>
+            <option value="service">⚙️ Service</option>
+            <option value="tyre_pressure">💨 Tyre Air</option>
+            <option value="wheel_alignment">🔧 Alignment</option>
+            <option value="wheel_rotation">🔄 Rotation</option>
+            <option value="tyre_change">🛞 Tyre Change</option>
+            <option value="wiper_change">🌧️ Wipers</option>
+            <option value="insurance">🛡️ Insurance</option>
+            <option value="other">📝 Other</option>
+        </select>
+    </div>
+    <div class="flex items-end justify-between bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/50">
+        <div>
+            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Total Spent</p>
+            <p class="text-2xl font-black text-blue-600 dark:text-blue-400" id="insight-total">₹0</p>
+        </div>
+        <div class="text-right">
+            <p class="text-sm font-black dark:text-slate-200" id="insight-count">0</p>
+            <p class="text-[10px] text-slate-400 font-bold uppercase">Entries</p>
+        </div>
+    </div>
+</div>
+
 <div class="space-y-4">
 <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-100 dark:border-slate-800">
 <h3 class="text-xs font-bold uppercase text-slate-400 mb-4">Expense Distribution</h3>
@@ -286,6 +317,26 @@ dynamicFields.classList.add('hidden');
 }
 });
 
+// NEW: Category Insights Tool Logic
+const insightSelect = document.getElementById('insight-category');
+insightSelect.addEventListener('change', updateInsights);
+
+function updateInsights() {
+    const selectedCat = insightSelect.value;
+    let sum = 0, count = 0;
+    
+    expensesData.forEach(item => {
+        if (item.category === selectedCat) {
+            sum += item.cost || 0;
+            count++;
+        }
+    });
+    
+    document.getElementById('insight-total').innerText = `₹${sum.toLocaleString()}`;
+    document.getElementById('insight-count').innerText = count;
+}
+
+
 // Data Management (Firebase)
 const init = async () => {
 try {
@@ -404,6 +455,7 @@ document.getElementById('stat-avg').innerText = `₹${avgCost.toLocaleString()}`
 document.getElementById('stat-count').innerText = expensesData.length;
 document.getElementById('history-count').innerText = `${expensesData.length} entries`;
 
+updateInsights(); // NEW: Refresh insights tool on load
 updateCharts();
 }
 
