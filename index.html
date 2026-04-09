@@ -25,13 +25,9 @@
         .tab-active { color: #3b82f6; transform: translateY(-2px); }
         .tab-active::after { content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: #3b82f6; border-radius: 50%; }
         
-        /* Hide scrollbars */
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        
-        /* Smooth transition for theme switching */
         * { transition: background-color 0.2s ease, border-color 0.2s ease; }
 
-        /* Car & Smoke Animations */
         @keyframes bounce-car {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-4px); }
@@ -69,7 +65,6 @@
         
         <!-- Dashboard View -->
         <div id="view-dashboard" class="space-y-6">
-            <!-- Total Card -->
             <div class="bg-gradient-to-br from-blue-600 to-blue-700 p-6 rounded-[2rem] text-white shadow-xl shadow-blue-500/20 relative overflow-hidden">
                 <i class="fa-solid fa-wallet absolute -right-4 -bottom-4 text-8xl opacity-10"></i>
                 <p class="text-xs font-bold opacity-80 uppercase tracking-widest">Total Investment</p>
@@ -86,7 +81,7 @@
                 </div>
             </div>
 
-            <!-- Stats Grid (Horizontal Scroll on Mobile) -->
+            <!-- Stats Grid -->
             <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                 <div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
                     <p class="text-[10px] font-bold text-slate-400 uppercase">Fuel</p>
@@ -102,7 +97,7 @@
                 </div>
             </div>
 
-            <!-- NEW: Category Insights Tool -->
+            <!-- Category Insights Tool -->
             <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xs font-bold uppercase text-slate-400 flex items-center gap-2">
@@ -167,9 +162,7 @@
                         </select>
                     </div>
 
-                    <div id="dynamic-fields" class="hidden bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
-                        <!-- Populated via JS based on category -->
-                    </div>
+                    <div id="dynamic-fields" class="hidden bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700"></div>
 
                     <div class="flex gap-4">
                         <div class="flex-1 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
@@ -186,10 +179,16 @@
                         <label class="text-[10px] font-bold text-slate-400 uppercase">Cost (₹)</label>
                         <input type="number" id="cost" placeholder="0" class="w-full bg-transparent font-black text-2xl text-blue-600 outline-none dark:text-blue-400">
                     </div>
+
+                    <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Notes (Optional)</label>
+                        <input type="text" id="notes" placeholder="Any specific details..." class="w-full bg-transparent font-bold py-1 outline-none dark:text-white">
+                    </div>
                 </div>
-                <button type="submit" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl shadow-xl shadow-blue-500/30 active:scale-95 transition-transform">
+                <button type="submit" id="submit-btn" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl shadow-xl shadow-blue-500/30 active:scale-95 transition-transform">
                     SAVE ENTRY
                 </button>
+                <p id="form-error" class="text-red-500 text-xs hidden text-center mt-2"></p>
             </form>
         </div>
 
@@ -228,11 +227,9 @@
             <div class="absolute left-4 top-8 w-3 h-3 bg-slate-300 dark:bg-slate-600 rounded-full animate-smoke-1 blur-[1px]"></div>
             <div class="absolute left-2 top-7 w-2 h-2 bg-slate-300 dark:bg-slate-600 rounded-full animate-smoke-2 blur-[1px]"></div>
             <div class="absolute left-6 top-6 w-4 h-4 bg-slate-300 dark:bg-slate-600 rounded-full animate-smoke-3 blur-[2px]"></div>
-
             <div class="absolute right-6 animate-car">
                 <i class="fa-solid fa-car-side text-6xl text-blue-600 drop-shadow-lg"></i>
             </div>
-            
             <div class="absolute bottom-0 left-0 right-0 h-1 bg-slate-200 dark:bg-slate-800 rounded overflow-hidden">
                 <div class="w-full h-full bg-slate-400 dark:bg-slate-500 origin-left animate-pulse"></div>
             </div>
@@ -243,10 +240,11 @@
     <!-- Application Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const config = {
+        // ORIGINAL FIREBASE CONFIG
+        const userProvidedConfig = {
             apiKey: "AIzaSyAJ9K9fQ0ThMB7aXB6qNHr3_yLUdqJgnCM",
             authDomain: "my-chain-reaction-game.firebaseapp.com",
             projectId: "my-chain-reaction-game",
@@ -255,19 +253,19 @@
             appId: "1:32751418407:web:ff8244007ef2b099d56202"
         };
 
-        const app = initializeApp(config);
+        const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'ignis_tracker_default';
+        const app = initializeApp(userProvidedConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
+        let currentUser = null;
         let expensesData = [];
         let categoryChart = null, timelineChart = null;
 
-        // Theme Toggle Logic
+        // Theme Toggle
         const themeBtn = document.getElementById('theme-toggle');
         const html = document.documentElement;
-
-        if (localStorage.getItem('theme') === 'dark') {
-            html.classList.add('dark');
-        }
+        if (localStorage.getItem('theme') === 'dark') html.classList.add('dark');
 
         themeBtn.onclick = () => {
             html.classList.toggle('dark');
@@ -275,16 +273,14 @@
             updateCharts();
         };
 
-        // Tab Switcher Logic
+        // Tab Switcher
         window.switchTab = (tab) => {
             document.getElementById('view-dashboard').classList.add('hidden');
             document.getElementById('view-add').classList.add('hidden');
             document.getElementById('view-history').classList.add('hidden');
-            
             document.getElementById(`view-${tab}`).classList.remove('hidden');
             
-            const btns = ['dash', 'hist'];
-            btns.forEach(b => {
+            ['dash', 'hist'].forEach(b => {
                 document.getElementById(`btn-${b}`).classList.remove('tab-active');
                 document.getElementById(`btn-${b}`).classList.add('text-slate-400', 'dark:text-slate-500');
             });
@@ -294,14 +290,12 @@
                 activeBtn.classList.add('tab-active');
                 activeBtn.classList.remove('text-slate-400', 'dark:text-slate-500');
             }
-            
             if(tab === 'dashboard') updateCharts();
         };
 
-        // Date input default
         document.getElementById('date').valueAsDate = new Date();
 
-        // Dynamic Form Fields Logic
+        // Original Dynamic Fields Logic
         const categorySelect = document.getElementById('category');
         const dynamicFields = document.getElementById('dynamic-fields');
 
@@ -310,101 +304,153 @@
             dynamicFields.innerHTML = ''; 
             dynamicFields.classList.remove('hidden');
 
-            if (val === 'wiper_change') {
+            if (val === 'tyre_pressure') {
                 dynamicFields.innerHTML = `
-                    <label class="text-[10px] font-bold text-slate-400 uppercase">Wiper Position</label>
-                    <select id="dyn_wiper_pos" class="w-full bg-transparent font-bold py-2 outline-none dark:text-white appearance-none border-b border-slate-300 dark:border-slate-600">
-                        <option value="Front Only" class="text-slate-800">Front Both</option>
-                        <option value="Back Only" class="text-slate-800">Back/Rear Only</option>
-                        <option value="Front and Back" class="text-slate-800">Front & Back (All)</option>
-                    </select>
-                `;
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Front PSI</label><input type="number" id="dyn_front_psi" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="e.g. 32"></div>
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Rear PSI</label><input type="number" id="dyn_rear_psi" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="e.g. 32"></div>
+                    </div>`;
+            } else if (val === 'wiper_change') {
+                dynamicFields.innerHTML = `
+                    <label class="text-[10px] font-bold text-slate-400 uppercase">Position</label>
+                    <select id="dyn_wiper_pos" class="w-full bg-transparent font-bold py-2 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600">
+                        <option value="Front Both" class="text-slate-800">Front Both</option>
+                        <option value="Rear" class="text-slate-800">Rear Only</option>
+                        <option value="All" class="text-slate-800">All 3</option>
+                    </select>`;
             } else if (val === 'tyre_change') {
                 dynamicFields.innerHTML = `
-                    <label class="text-[10px] font-bold text-slate-400 uppercase">Number of Tyres Replaced</label>
-                    <input type="number" id="dyn_tyre_qty" min="1" max="5" value="4" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600">
-                `;
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Brand</label><input type="text" id="dyn_tyre_brand" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="Brand"></div>
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Quantity</label><input type="number" id="dyn_tyre_qty" min="1" max="5" value="4" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600"></div>
+                    </div>`;
+            } else if (val === 'service') {
+                dynamicFields.innerHTML = `
+                    <label class="text-[10px] font-bold text-slate-400 uppercase">Service Type</label>
+                    <input type="text" id="dyn_service_type" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="e.g. General">`;
             } else {
                 dynamicFields.classList.add('hidden');
             }
         });
 
-        // Dashboard Insights Logic
+        // Dashboard Insights Tool
         const insightSelect = document.getElementById('insight-category');
         insightSelect.addEventListener('change', updateInsights);
-
         function updateInsights() {
             const selectedCat = insightSelect.value;
-            let sum = 0;
-            let count = 0;
-
+            let sum = 0, count = 0;
             expensesData.forEach(item => {
                 if (item.category === selectedCat) {
-                    sum += item.cost || 0;
-                    count++;
+                    sum += item.cost || 0; count++;
                 }
             });
-
             document.getElementById('insight-total').innerText = `₹${sum.toLocaleString()}`;
             document.getElementById('insight-count').innerText = count;
         }
 
-        // Data Management (Firebase)
-        const init = async () => {
+        // ORIGINAL AUTH & INIT LOGIC
+        const initApp = async () => {
             try {
-                const user = await signInAnonymously(auth);
-                const colRef = collection(db, 'artifacts', 'ignis_v3', 'users', user.user.uid, 'data');
-
-                onSnapshot(colRef, (snap) => {
-                    expensesData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                    expensesData.sort((a, b) => new Date(b.date) - new Date(a.date));
-                    updateUI();
-                    
-                    const loader = document.getElementById('loading-overlay');
-                    loader.classList.add('opacity-0');
-                    setTimeout(() => loader.classList.add('hidden', 'pointer-events-none'), 500);
-                });
-
-                document.getElementById('expense-form').onsubmit = async (e) => {
-                    e.preventDefault();
-                    
-                    const dataObj = {
-                        category: categorySelect.value,
-                        date: document.getElementById('date').value,
-                        km: parseInt(document.getElementById('km').value) || 0,
-                        cost: parseFloat(document.getElementById('cost').value) || 0,
-                    };
-
-                    if (dataObj.category === 'wiper_change') {
-                        dataObj.details = document.getElementById('dyn_wiper_pos')?.value;
-                    } else if (dataObj.category === 'tyre_change') {
-                        dataObj.details = document.getElementById('dyn_tyre_qty')?.value + " Tyres";
-                    }
-
-                    await addDoc(colRef, dataObj);
-                    
-                    switchTab('dashboard');
-                    e.target.reset();
-                    document.getElementById('date').valueAsDate = new Date();
-                    dynamicFields.classList.add('hidden');
-                };
-
-                window.del = async (id) => {
-                    if(confirm("Delete this record?")) {
-                        await deleteDoc(doc(db, 'artifacts', 'ignis_v3', 'users', user.user.uid, 'data', id));
-                    }
-                };
-
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInAnonymously(auth); 
+                } else {
+                    await signInAnonymously(auth);
+                }
             } catch (error) {
-                console.error("Firebase Error:", error);
-                alert("Could not connect to database.");
-                document.getElementById('loading-overlay').classList.add('hidden');
+                console.error("Auth error:", error);
             }
+        };
+
+        let unsubscribe = null;
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                fetchData();
+            } else {
+                currentUser = null;
+            }
+        });
+
+        const fetchData = () => {
+            if (!currentUser) return;
+            const colRef = collection(db, 'artifacts', APP_ID, 'users', currentUser.uid, 'ignis_data');
+            
+            unsubscribe = onSnapshot(colRef, (snapshot) => {
+                expensesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                expensesData.sort((a, b) => new Date(b.date) - new Date(a.date));
+                updateUI();
+                
+                const loader = document.getElementById('loading-overlay');
+                loader.classList.add('opacity-0');
+                setTimeout(() => loader.classList.add('hidden', 'pointer-events-none'), 500);
+            }, (error) => {
+                console.error("Fetch error:", error);
+                document.getElementById('loading-overlay').classList.add('hidden');
+            });
+        };
+
+        // Original Save Logic mapped to New UI
+        document.getElementById('expense-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.innerHTML = 'SAVING...';
+
+            const category = categorySelect.value;
+            const data = {
+                category: category,
+                date: document.getElementById('date').value,
+                km: parseInt(document.getElementById('km').value) || 0,
+                cost: parseFloat(document.getElementById('cost').value) || 0,
+                notes: document.getElementById('notes').value,
+                createdAt: new Date().toISOString()
+            };
+
+            if (category === 'tyre_pressure') {
+                data.front_psi = document.getElementById('dyn_front_psi')?.value || '';
+                data.rear_psi = document.getElementById('dyn_rear_psi')?.value || '';
+            } else if (category === 'wiper_change') {
+                data.position = document.getElementById('dyn_wiper_pos')?.value || '';
+            } else if (category === 'tyre_change') {
+                data.brand = document.getElementById('dyn_tyre_brand')?.value || '';
+                data.quantity = document.getElementById('dyn_tyre_qty')?.value || '';
+            } else if (category === 'service') {
+                data.service_type = document.getElementById('dyn_service_type')?.value || '';
+            }
+
+            try {
+                const colRef = collection(db, 'artifacts', APP_ID, 'users', currentUser.uid, 'ignis_data');
+                await addDoc(colRef, data);
+                
+                document.getElementById('cost').value = '';
+                document.getElementById('notes').value = '';
+                dynamicFields.innerHTML = '';
+                dynamicFields.classList.add('hidden');
+                categorySelect.value = 'fuel';
+                switchTab('dashboard');
+                
+            } catch (error) {
+                console.error("Save error:", error);
+                document.getElementById('form-error').textContent = "Failed to save record.";
+                document.getElementById('form-error').classList.remove('hidden');
+            } finally {
+                btn.innerHTML = 'SAVE ENTRY';
+                btn.disabled = false;
+            }
+        });
+
+        window.del = async (id) => {
+            if (!currentUser || !confirm("Delete this record?")) return;
+            try {
+                await deleteDoc(doc(db, 'artifacts', APP_ID, 'users', currentUser.uid, 'ignis_data', id));
+            } catch (e) { console.error("Delete failed", e); }
         };
 
         const categoryEmojis = {
             fuel: '⛽', wash: '🧼', service: '⚙️', tyre_pressure: '💨', wheel_alignment: '🔧', 
-            wheel_rotation: '🔄', tyre_change: '🛞', wiper_change: '🌧️', insurance: '🛡️', other: '📝'
+            wheel_rotation: '🔄', tyre_change: '🛞', wiper_change: '🌧️', insurance: '🛡️', other: '📝', puc: '📜'
         };
 
         function updateUI() {
@@ -413,16 +459,24 @@
             historyList.innerHTML = '';
 
             expensesData.forEach(item => {
-                total += item.cost;
-                if(item.category === 'fuel') fuel += item.cost;
-                if(item.category === 'service') service += item.cost;
+                total += item.cost || 0;
+                if(item.category === 'fuel') fuel += item.cost || 0;
+                if(item.category === 'service') service += item.cost || 0;
                 if(item.km > maxKm) maxKm = item.km;
 
                 const emoji = categoryEmojis[item.category] || '📝';
                 let catName = item.category.replace('_', ' ');
                 
-                if(item.details) {
-                    catName += ` (${item.details})`;
+                // Original details string parsing logic
+                let details = item.notes || '';
+                if (item.category === 'tyre_pressure' && (item.front_psi || item.rear_psi)) {
+                    details = `F:${item.front_psi || '?'} R:${item.rear_psi || '?'} ${details}`;
+                } else if (item.category === 'wiper_change' && item.position) {
+                    details = `${item.position} ${details}`;
+                } else if (item.category === 'tyre_change' && item.brand) {
+                    details = `${item.quantity}x ${item.brand} ${details}`;
+                } else if (item.category === 'service' && item.service_type) {
+                    details = `${item.service_type} ${details}`;
                 }
 
                 historyList.innerHTML += `
@@ -434,6 +488,7 @@
                             <div>
                                 <p class="font-bold text-sm capitalize">${catName}</p>
                                 <p class="text-[10px] font-bold text-slate-400 uppercase">${new Date(item.date).toLocaleDateString()} • ${item.km} KM</p>
+                                ${details ? `<p class="text-[10px] text-slate-500 mt-1 line-clamp-1 max-w-[150px]">${details}</p>` : ''}
                             </div>
                         </div>
                         <div class="text-right">
@@ -454,5 +509,70 @@
             document.getElementById('stat-count').innerText = expensesData.length;
             document.getElementById('history-count').innerText = `${expensesData.length} entries`;
             
-            updateInsights(); // Refresh the insights dropdown tool
+            updateInsights();
             updateCharts();
+        }
+
+        function updateCharts() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const color = isDark ? '#94a3b8' : '#64748b';
+            const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+            
+            const catData = {};
+            expensesData.forEach(i => {
+                if(i.cost > 0) catData[i.category] = (catData[i.category] || 0) + i.cost;
+            });
+
+            if(categoryChart) categoryChart.destroy();
+            categoryChart = new Chart(document.getElementById('categoryChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(catData).map(k => k.replace('_', ' ').toUpperCase()),
+                    datasets: [{ 
+                        data: Object.values(catData), 
+                        backgroundColor: ['#3b82f6', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#64748b', '#0ea5e9', '#f43f5e'], 
+                        borderWidth: 0 
+                    }]
+                },
+                options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color, font: { weight: 'bold', size: 10 } } } }, cutout: '70%' }
+            });
+
+            const timeMap = {};
+            [...expensesData].reverse().forEach(item => {
+                if(item.cost > 0) {
+                    const d = new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    timeMap[d] = (timeMap[d] || 0) + item.cost;
+                }
+            });
+
+            if(timelineChart) timelineChart.destroy();
+            timelineChart = new Chart(document.getElementById('timelineChart'), {
+                type: 'line',
+                data: {
+                    labels: Object.keys(timeMap),
+                    datasets: [{
+                        label: 'Spent',
+                        data: Object.values(timeMap),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#3b82f6'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { grid: { color: gridColor }, ticks: { color, font: {size: 10} } },
+                        x: { grid: { display: false }, ticks: { color, font: {size: 10} } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        initApp();
+    </script>
+</body>
+</html>
