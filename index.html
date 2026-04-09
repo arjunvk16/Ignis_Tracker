@@ -33,20 +33,48 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color
 
 /* Car & Smoke Animations */
 @keyframes bounce-car {
-0%, 100% { transform: translateY(0); }
-50% { transform: translateY(-4px); }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
 }
 @keyframes smoke-fade {
-0% { transform: translate(0, 0) scale(1); opacity: 0.8; }
-100% { transform: translate(-30px, -15px) scale(2.5); opacity: 0; }
+    0% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+    100% { transform: translate(-30px, -15px) scale(2.5); opacity: 0; }
 }
 .animate-car { animation: bounce-car 0.4s ease-in-out infinite; }
 .animate-smoke-1 { animation: smoke-fade 1s ease-out infinite; }
 .animate-smoke-2 { animation: smoke-fade 1.2s ease-out infinite 0.3s; }
 .animate-smoke-3 { animation: smoke-fade 0.9s ease-out infinite 0.6s; }
+
+/* Theme Sweep Animations */
+#theme-transition-overlay {
+    transition: opacity 0.4s ease-in-out;
+}
+@keyframes sweep-smoke-fade {
+    0% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+    100% { transform: translate(-50px, -10px) scale(2.5); opacity: 0; }
+}
+.animate-sweep-smoke-1 { animation: sweep-smoke-fade 0.8s ease-out infinite; }
+.animate-sweep-smoke-2 { animation: sweep-smoke-fade 1s ease-out infinite 0.2s; }
+.animate-sweep-smoke-3 { animation: sweep-smoke-fade 0.7s ease-out infinite 0.4s; }
 </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen pb-24">
+
+<!-- The Driving Car Theme Overlay -->
+<div id="theme-transition-overlay" class="fixed inset-0 z-[100] hidden pointer-events-none overflow-hidden">
+    <!-- The expanding background that sweeps across -->
+    <div id="theme-sweep" class="absolute top-0 bottom-0 w-0 flex items-center">
+        <!-- The Car attached to the moving edge -->
+        <div id="theme-car-wrapper" class="absolute top-1/2">
+            <!-- Trail Smoke -->
+            <div class="absolute left-[-10px] top-[40px] w-3 h-3 bg-slate-400 rounded-full animate-sweep-smoke-1 blur-[1px]"></div>
+            <div class="absolute left-[-20px] top-[30px] w-2 h-2 bg-slate-400 rounded-full animate-sweep-smoke-2 blur-[1px]"></div>
+            <div class="absolute left-0 top-[20px] w-4 h-4 bg-slate-400 rounded-full animate-sweep-smoke-3 blur-[2px]"></div>
+            <!-- Car Icon -->
+            <i class="fa-solid fa-car-side text-7xl drop-shadow-2xl animate-car"></i>
+        </div>
+    </div>
+</div>
 
 <header class="glass sticky top-0 z-30 border-b border-slate-200 dark:border-slate-800 px-4 py-3">
 <div class="max-w-5xl mx-auto flex justify-between items-center">
@@ -56,9 +84,9 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color
 </div>
 <h1 class="font-extrabold text-lg tracking-tight">IGNIS <span class="text-blue-600">Zeta</span></h1>
 </div>
-<button id="theme-toggle" class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-800">
-<i class="fa-solid fa-moon dark:hidden"></i>
-<i class="fa-solid fa-sun hidden dark:block text-yellow-400"></i>
+<button id="theme-toggle" class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700">
+    <i class="fa-solid fa-car-side dark:hidden text-slate-800"></i>
+    <i class="fa-solid fa-car-side hidden dark:block text-slate-100"></i>
 </button>
 </div>
 </header>
@@ -83,21 +111,30 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color
 </div>
 
 <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-<div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
-<p class="text-[10px] font-bold text-slate-400 uppercase">Fuel</p>
-<p class="text-lg font-black text-orange-500" id="stat-fuel">₹0</p>
-</div>
-<div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
-<p class="text-[10px] font-bold text-slate-400 uppercase">Service</p>
-<p class="text-lg font-black text-emerald-500" id="stat-service">₹0</p>
-</div>
-<div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
-<p class="text-[10px] font-bold text-slate-400 uppercase">Avg Cost</p>
-<p class="text-lg font-black text-blue-500" id="stat-avg">₹0</p>
-</div>
+    <!-- Gamification & Pro Stats Added Here! -->
+    <div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+        <p class="text-[10px] font-bold text-slate-400 uppercase">Health Score</p>
+        <p class="text-lg font-black text-emerald-500" id="stat-health">100%</p>
+    </div>
+    <div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+        <p class="text-[10px] font-bold text-slate-400 uppercase">Cost / KM</p>
+        <p class="text-lg font-black text-purple-500" id="stat-cost-per-km">₹0</p>
+    </div>
+    <div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+        <p class="text-[10px] font-bold text-slate-400 uppercase">Mileage</p>
+        <p class="text-lg font-black text-cyan-500" id="stat-mileage">0 km/l</p>
+    </div>
+    <div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+        <p class="text-[10px] font-bold text-slate-400 uppercase">Fuel</p>
+        <p class="text-lg font-black text-orange-500" id="stat-fuel">₹0</p>
+    </div>
+    <div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+        <p class="text-[10px] font-bold text-slate-400 uppercase">Service</p>
+        <p class="text-lg font-black text-emerald-500" id="stat-service">₹0</p>
+    </div>
 </div>
 
-<!-- NEW: Category Insights Tool -->
+<!-- Category Insights Tool -->
 <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800">
     <div class="flex justify-between items-center mb-4">
         <h3 class="text-xs font-bold uppercase text-slate-400 flex items-center gap-2">
@@ -113,6 +150,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color
             <option value="tyre_change">🛞 Tyre Change</option>
             <option value="wiper_change">🌧️ Wipers</option>
             <option value="insurance">🛡️ Insurance</option>
+            <option value="puc">📜 PUC (Pollution)</option>
             <option value="other">📝 Other</option>
         </select>
     </div>
@@ -156,6 +194,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color
 <option value="tyre_change" class="text-slate-800">🛞 Tyre Change</option>
 <option value="wiper_change" class="text-slate-800">🌧️ Wiper Change</option>
 <option value="insurance" class="text-slate-800">🛡️ Insurance</option>
+<option value="puc" class="text-slate-800">📜 PUC (Pollution)</option>
 <option value="other" class="text-slate-800">📝 Other</option>
 </select>
 </div>
@@ -178,8 +217,14 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color
 <label class="text-[10px] font-bold text-slate-400 uppercase">Cost (₹)</label>
 <input type="number" id="cost" placeholder="0" class="w-full bg-transparent font-black text-2xl text-blue-600 outline-none dark:text-blue-400">
 </div>
+
+<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+<label class="text-[10px] font-bold text-slate-400 uppercase">Notes (Optional)</label>
+<input type="text" id="notes" placeholder="Any specific details..." class="w-full bg-transparent font-bold py-1 outline-none dark:text-white">
 </div>
-<button type="submit" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl shadow-xl shadow-blue-500/30 active:scale-95 transition-transform">
+
+</div>
+<button type="submit" id="submit-btn" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl shadow-xl shadow-blue-500/30 active:scale-95 transition-transform">
 SAVE ENTRY
 </button>
 </form>
@@ -230,10 +275,10 @@ SAVE ENTRY
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-const config = {
+const userProvidedConfig = {
 apiKey: "AIzaSyAJ9K9fQ0ThMB7aXB6qNHr3_yLUdqJgnCM",
 authDomain: "my-chain-reaction-game.firebaseapp.com",
 projectId: "my-chain-reaction-game",
@@ -242,24 +287,61 @@ messagingSenderId: "32751418407",
 appId: "1:32751418407:web:ff8244007ef2b099d56202"
 };
 
-const app = initializeApp(config);
+const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'ignis_tracker_default';
+const app = initializeApp(userProvidedConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+let currentUser = null;
 let expensesData = [];
 let categoryChart = null, timelineChart = null;
 
-// Theme Toggle Logic
+// --- ADVANCED DRIVING CAR THEME TOGGLE ---
 const themeBtn = document.getElementById('theme-toggle');
 const html = document.documentElement;
 
 if (localStorage.getItem('theme') === 'dark') {
-html.classList.add('dark');
+    html.classList.add('dark');
 }
 
 themeBtn.onclick = () => {
-html.classList.toggle('dark');
-localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-updateCharts();
+    const isDark = html.classList.contains('dark');
+    const overlay = document.getElementById('theme-transition-overlay');
+    const sweep = document.getElementById('theme-sweep');
+    const carWrapper = document.getElementById('theme-car-wrapper');
+
+    overlay.classList.remove('hidden');
+    overlay.style.opacity = '1';
+    sweep.style.transition = 'none';
+    sweep.style.width = '0vw';
+
+    if (!isDark) {
+        sweep.className = "absolute top-0 bottom-0 left-0 bg-slate-950 flex items-center";
+        carWrapper.className = "absolute top-1/2 right-[-65px] text-blue-600";
+        carWrapper.style.transform = "translateY(-50%) scaleX(1)";
+    } else {
+        sweep.className = "absolute top-0 bottom-0 right-0 bg-slate-50 flex items-center";
+        carWrapper.className = "absolute top-1/2 left-[-65px] text-blue-600";
+        carWrapper.style.transform = "translateY(-50%) scaleX(-1)";
+    }
+
+    setTimeout(() => {
+        sweep.style.transition = 'width 1s cubic-bezier(0.645, 0.045, 0.355, 1)';
+        sweep.style.width = '100vw';
+
+        setTimeout(() => {
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', !isDark ? 'dark' : 'light');
+            updateCharts();
+            
+            overlay.style.opacity = '0';
+            
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                sweep.style.width = '0vw';
+            }, 400);
+        }, 1000); 
+    }, 20);
 };
 
 // Tab Switcher Logic
@@ -267,10 +349,8 @@ window.switchTab = (tab) => {
 document.getElementById('view-dashboard').classList.add('hidden');
 document.getElementById('view-add').classList.add('hidden');
 document.getElementById('view-history').classList.add('hidden');
-
 document.getElementById(`view-${tab}`).classList.remove('hidden');
 
-// Manage Bottom Nav Active States
 const btns = ['dash', 'hist'];
 btns.forEach(b => {
 document.getElementById(`btn-${b}`).classList.remove('tab-active');
@@ -282,42 +362,62 @@ const activeBtn = document.getElementById(`btn-${tab === 'dashboard' ? 'dash' : 
 activeBtn.classList.add('tab-active');
 activeBtn.classList.remove('text-slate-400', 'dark:text-slate-500');
 }
-
 if(tab === 'dashboard') updateCharts();
 };
 
-// Date input default
 document.getElementById('date').valueAsDate = new Date();
 
-// Dynamic Form Fields Logic
+// Dynamic Form Fields Logic (NOW WITH FUEL LITERS)
 const categorySelect = document.getElementById('category');
 const dynamicFields = document.getElementById('dynamic-fields');
 
-categorySelect.addEventListener('change', (e) => {
-const val = e.target.value;
-dynamicFields.innerHTML = ''; // clear old
+// Pre-trigger on load
+dynamicFields.innerHTML = `
+    <label class="text-[10px] font-bold text-slate-400 uppercase">Fuel Volume (Liters)</label>
+    <input type="number" step="0.01" id="dyn_fuel_liters" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="e.g. 30.5">
+`;
 dynamicFields.classList.remove('hidden');
 
-if (val === 'wiper_change') {
-dynamicFields.innerHTML = `
-                   <label class="text-[10px] font-bold text-slate-400 uppercase">Wiper Position</label>
-                   <select id="dyn_wiper_pos" class="w-full bg-transparent font-bold py-2 outline-none dark:text-white appearance-none">
-                       <option value="Front Only" class="text-slate-800">Front Both</option>
-                       <option value="Back Only" class="text-slate-800">Back/Rear Only</option>
-                       <option value="Front and Back" class="text-slate-800">Front & Back (All)</option>
-                   </select>
-               `;
+categorySelect.addEventListener('change', (e) => {
+const val = e.target.value;
+dynamicFields.innerHTML = ''; 
+dynamicFields.classList.remove('hidden');
+
+if (val === 'fuel') {
+    dynamicFields.innerHTML = `
+        <label class="text-[10px] font-bold text-slate-400 uppercase">Fuel Volume (Liters)</label>
+        <input type="number" step="0.01" id="dyn_fuel_liters" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="e.g. 30.5">
+    `;
+} else if (val === 'tyre_pressure') {
+    dynamicFields.innerHTML = `
+        <div class="grid grid-cols-2 gap-4">
+            <div><label class="text-[10px] font-bold text-slate-400 uppercase">Front PSI</label><input type="number" id="dyn_front_psi" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="e.g. 32"></div>
+            <div><label class="text-[10px] font-bold text-slate-400 uppercase">Rear PSI</label><input type="number" id="dyn_rear_psi" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="e.g. 32"></div>
+        </div>`;
+} else if (val === 'wiper_change') {
+    dynamicFields.innerHTML = `
+        <label class="text-[10px] font-bold text-slate-400 uppercase">Position</label>
+        <select id="dyn_wiper_pos" class="w-full bg-transparent font-bold py-2 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600">
+            <option value="Front Both" class="text-slate-800">Front Both</option>
+            <option value="Rear" class="text-slate-800">Rear Only</option>
+            <option value="All" class="text-slate-800">All 3</option>
+        </select>`;
 } else if (val === 'tyre_change') {
-dynamicFields.innerHTML = `
-                   <label class="text-[10px] font-bold text-slate-400 uppercase">Number of Tyres Replaced</label>
-                   <input type="number" id="dyn_tyre_qty" min="1" max="5" value="4" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white">
-               `;
+    dynamicFields.innerHTML = `
+        <div class="grid grid-cols-2 gap-4">
+            <div><label class="text-[10px] font-bold text-slate-400 uppercase">Brand</label><input type="text" id="dyn_tyre_brand" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="e.g. Bridgestone"></div>
+            <div><label class="text-[10px] font-bold text-slate-400 uppercase">Quantity</label><input type="number" id="dyn_tyre_qty" min="1" max="5" value="4" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600"></div>
+        </div>`;
+} else if (val === 'service') {
+    dynamicFields.innerHTML = `
+        <label class="text-[10px] font-bold text-slate-400 uppercase">Service Type</label>
+        <input type="text" id="dyn_service_type" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="e.g. General Service">`;
 } else {
-dynamicFields.classList.add('hidden');
+    dynamicFields.classList.add('hidden');
 }
 });
 
-// NEW: Category Insights Tool Logic
+// Category Insights Tool Logic
 const insightSelect = document.getElementById('insight-category');
 insightSelect.addEventListener('change', updateInsights);
 
@@ -338,72 +438,117 @@ function updateInsights() {
 
 
 // Data Management (Firebase)
-const init = async () => {
-try {
-const user = await signInAnonymously(auth);
-const colRef = collection(db, 'artifacts', 'ignis_v3', 'users', user.user.uid, 'data');
+const initApp = async () => {
+    try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInAnonymously(auth); 
+        } else {
+            await signInAnonymously(auth);
+        }
+    } catch (error) {
+        console.error("Auth error:", error);
+    }
+};
 
-onSnapshot(colRef, (snap) => {
-expensesData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-expensesData.sort((a, b) => new Date(b.date) - new Date(a.date));
-updateUI();
-
-// Hide loading overlay gracefully
-const loader = document.getElementById('loading-overlay');
-loader.classList.add('opacity-0');
-setTimeout(() => loader.classList.add('hidden', 'pointer-events-none'), 500);
+let unsubscribe = null;
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        currentUser = user;
+        fetchData();
+    } else {
+        currentUser = null;
+    }
 });
 
-document.getElementById('expense-form').onsubmit = async (e) => {
-e.preventDefault();
+const fetchData = () => {
+    if (!currentUser) return;
+    const colRef = collection(db, 'artifacts', APP_ID, 'users', currentUser.uid, 'ignis_data');
+    
+    unsubscribe = onSnapshot(colRef, (snapshot) => {
+        expensesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        expensesData.sort((a, b) => new Date(b.date) - new Date(a.date));
+        updateUI();
+        
+        const loader = document.getElementById('loading-overlay');
+        loader.classList.add('opacity-0');
+        setTimeout(() => loader.classList.add('hidden', 'pointer-events-none'), 500);
+    }, (error) => {
+        console.error("Fetch error:", error);
+        document.getElementById('loading-overlay').classList.add('hidden');
+    });
+};
 
-// Gather core data
-const dataObj = {
-category: categorySelect.value,
+document.getElementById('expense-form').addEventListener('submit', async (e) => {
+e.preventDefault();
+if (!currentUser) return;
+
+const btn = document.getElementById('submit-btn');
+btn.disabled = true;
+btn.innerHTML = 'SAVING...';
+
+const category = categorySelect.value;
+const data = {
+category: category,
 date: document.getElementById('date').value,
 km: parseInt(document.getElementById('km').value) || 0,
 cost: parseFloat(document.getElementById('cost').value) || 0,
+notes: document.getElementById('notes').value,
+createdAt: new Date().toISOString()
 };
 
-// Check for dynamic inputs
-if (dataObj.category === 'wiper_change') {
-dataObj.details = document.getElementById('dyn_wiper_pos')?.value;
-} else if (dataObj.category === 'tyre_change') {
-dataObj.details = document.getElementById('dyn_tyre_qty')?.value + " Tyres";
+// Check for dynamic inputs & FUEL LOGIC
+if (category === 'fuel') {
+    const liters = parseFloat(document.getElementById('dyn_fuel_liters')?.value) || 0;
+    data.liters = liters; // Saved cleanly for math
+    if(liters > 0) data.details = `${liters} Liters`; // For the visual log
+} else if (category === 'tyre_pressure') {
+    data.front_psi = document.getElementById('dyn_front_psi')?.value || '';
+    data.rear_psi = document.getElementById('dyn_rear_psi')?.value || '';
+} else if (category === 'wiper_change') {
+    data.position = document.getElementById('dyn_wiper_pos')?.value || '';
+} else if (category === 'tyre_change') {
+    data.brand = document.getElementById('dyn_tyre_brand')?.value || '';
+    data.quantity = document.getElementById('dyn_tyre_qty')?.value || '';
+} else if (category === 'service') {
+    data.service_type = document.getElementById('dyn_service_type')?.value || '';
 }
 
-await addDoc(colRef, dataObj);
-
-switchTab('dashboard');
-e.target.reset();
-document.getElementById('date').valueAsDate = new Date();
-dynamicFields.classList.add('hidden');
-};
+try {
+    const colRef = collection(db, 'artifacts', APP_ID, 'users', currentUser.uid, 'ignis_data');
+    await addDoc(colRef, data);
+    
+    document.getElementById('cost').value = '';
+    document.getElementById('notes').value = '';
+    
+    // Reset Fuel Field as default
+    dynamicFields.innerHTML = `
+        <label class="text-[10px] font-bold text-slate-400 uppercase">Fuel Volume (Liters)</label>
+        <input type="number" step="0.01" id="dyn_fuel_liters" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="e.g. 30.5">
+    `;
+    dynamicFields.classList.remove('hidden');
+    categorySelect.value = 'fuel';
+    switchTab('dashboard');
+    
+} catch (error) {
+    console.error("Save error:", error);
+    document.getElementById('form-error').textContent = "Failed to save record.";
+    document.getElementById('form-error').classList.remove('hidden');
+} finally {
+    btn.innerHTML = 'SAVE ENTRY';
+    btn.disabled = false;
+}
+});
 
 window.del = async (id) => {
-if(confirm("Delete this record?")) {
-await deleteDoc(doc(db, 'artifacts', 'ignis_v3', 'users', user.user.uid, 'data', id));
-}
-};
-
-} catch (error) {
-console.error("Firebase Error:", error);
-alert("Could not connect to database.");
-document.getElementById('loading-overlay').classList.add('hidden');
-}
+if (!currentUser || !confirm("Delete this record?")) return;
+try {
+    await deleteDoc(doc(db, 'artifacts', APP_ID, 'users', currentUser.uid, 'ignis_data', id));
+} catch (e) { console.error("Delete failed", e); }
 };
 
 const categoryEmojis = {
-fuel: '⛽', 
-wash: '🧼', 
-service: '⚙️', 
-tyre_pressure: '💨', 
-wheel_alignment: '🔧', 
-wheel_rotation: '🔄', 
-tyre_change: '🛞', 
-wiper_change: '🌧️', 
-insurance: '🛡️', 
-other: '📝'
+fuel: '⛽', wash: '🧼', service: '⚙️', tyre_pressure: '💨', wheel_alignment: '🔧', 
+wheel_rotation: '🔄', tyre_change: '🛞', wiper_change: '🌧️', insurance: '🛡️', other: '📝', puc: '📜'
 };
 
 function updateUI() {
@@ -411,51 +556,134 @@ let total = 0, fuel = 0, service = 0, maxKm = 0;
 const historyList = document.getElementById('history-list');
 historyList.innerHTML = '';
 
+// Variables for Pro Stats
+let fuelEntries = [];
+let lastServiceKm = 0;
+let lastWashDate = 0;
+let lastPressureDate = 0;
+
 expensesData.forEach(item => {
-total += item.cost;
-if(item.category === 'fuel') fuel += item.cost;
-if(item.category === 'service') service += item.cost;
-if(item.km > maxKm) maxKm = item.km;
+    total += item.cost || 0;
+    
+    // Log maximum KM found
+    if(item.km > maxKm) maxKm = item.km;
 
-// Create Mobile Cards for History
-const emoji = categoryEmojis[item.category] || '📝';
-let catName = item.category.replace('_', ' ');
+    if(item.category === 'fuel') {
+        fuel += item.cost || 0;
+        if(item.liters && item.liters > 0) fuelEntries.push(item);
+    }
+    
+    // Health Check variables
+    if(item.category === 'service' && item.km > lastServiceKm) lastServiceKm = item.km;
+    if(item.category === 'wash') {
+        let d = new Date(item.date).getTime();
+        if(d > lastWashDate) lastWashDate = d;
+    }
+    if(item.category === 'tyre_pressure') {
+        let d = new Date(item.date).getTime();
+        if(d > lastPressureDate) lastPressureDate = d;
+    }
 
-// Append sub-details if they exist (like "Front Only" for wipers)
-if(item.details) {
-catName += ` (${item.details})`;
-}
+    const emoji = categoryEmojis[item.category] || '📝';
+    let catName = item.category.replace('_', ' ');
 
-historyList.innerHTML += `
-                   <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 flex justify-between items-center group">
-                       <div class="flex items-center gap-3">
-                           <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-lg">
-                               ${emoji}
-                           </div>
-                           <div>
-                               <p class="font-bold text-sm capitalize">${catName}</p>
-                               <p class="text-[10px] font-bold text-slate-400 uppercase">${new Date(item.date).toLocaleDateString()} • ${item.km} KM</p>
-                           </div>
-                       </div>
-                       <div class="text-right">
-                           <p class="font-black text-blue-600 dark:text-blue-400">₹${item.cost}</p>
-                           <button onclick="window.del('${item.id}')" class="text-xs text-red-400 dark:text-red-500 font-bold opacity-0 group-hover:opacity-100 transition-opacity">Delete</button>
-                       </div>
-                   </div>
-               `;
+    let details = item.notes || '';
+    if (item.category === 'fuel' && item.liters) {
+        details = `${item.liters} Liters | ${details}`;
+    } else if (item.category === 'tyre_pressure' && (item.front_psi || item.rear_psi)) {
+        details = `F:${item.front_psi || '?'} R:${item.rear_psi || '?'} | ${details}`;
+    } else if (item.category === 'wiper_change' && item.position) {
+        details = `${item.position} | ${details}`;
+    } else if (item.category === 'tyre_change' && item.brand) {
+        details = `${item.quantity}x ${item.brand} | ${details}`;
+    } else if (item.category === 'service' && item.service_type) {
+        details = `${item.service_type} | ${details}`;
+    } else if (item.details) {
+        details = `${item.details} | ${details}`;
+    }
+
+    historyList.innerHTML += `
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 flex justify-between items-center group">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-lg">
+                    ${emoji}
+                </div>
+                <div>
+                    <p class="font-bold text-sm capitalize">${catName}</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">${new Date(item.date).toLocaleDateString()} • ${item.km} KM</p>
+                    ${details.trim() !== '|' && details.trim() !== '' ? `<p class="text-[10px] text-slate-500 mt-1 line-clamp-1 max-w-[150px]">${details.replace(/^ \|\ | \| $/g, '')}</p>` : ''}
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="font-black text-blue-600 dark:text-blue-400">₹${item.cost}</p>
+                <button onclick="window.del('${item.id}')" class="text-xs text-red-400 dark:text-red-500 font-bold opacity-0 group-hover:opacity-100 transition-opacity">Delete</button>
+            </div>
+        </div>
+    `;
 });
 
-const avgCost = expensesData.length > 0 ? Math.round(total / expensesData.length) : 0;
+// --- 1. Gamified Health Score ---
+let score = 100;
+const now = new Date().getTime();
+const dayInMs = 1000 * 3600 * 24;
 
+if (lastWashDate > 0) {
+    if ((now - lastWashDate) / dayInMs > 30) score -= 10;
+    else if ((now - lastWashDate) / dayInMs > 14) score -= 5;
+} else score -= 5; // Deduct if never washed on record
+
+if (lastPressureDate > 0) {
+    if ((now - lastPressureDate) / dayInMs > 30) score -= 10;
+    else if ((now - lastPressureDate) / dayInMs > 15) score -= 5;
+}
+
+if (lastServiceKm > 0) {
+    const kmSinceService = maxKm - lastServiceKm;
+    if (kmSinceService > 10000) score -= 20;
+    else if (kmSinceService > 8500) score -= 10;
+}
+
+score = Math.max(0, score);
+let healthColor = 'text-emerald-500';
+if (score < 80) healthColor = 'text-yellow-500';
+if (score < 60) healthColor = 'text-red-500';
+
+document.getElementById('stat-health').innerText = `${score}%`;
+document.getElementById('stat-health').className = `text-lg font-black ${healthColor}`;
+
+// --- 2. Cost Per KM ---
+let costPerKm = maxKm > 0 ? (total / maxKm).toFixed(2) : "0.00";
+document.getElementById('stat-cost-per-km').innerText = `₹${costPerKm}`;
+
+// --- 3. Mileage Calculator ---
+let mileage = "0.0";
+if (fuelEntries.length > 1) {
+    // Sort fuel logs oldest to newest
+    fuelEntries.sort((a, b) => a.km - b.km);
+    
+    let distanceCovered = fuelEntries[fuelEntries.length - 1].km - fuelEntries[0].km;
+    let litersUsed = 0;
+    
+    // We ignore the liters from the VERY FIRST entry, because that fuel was used to travel the distance to the SECOND entry.
+    for (let i = 1; i < fuelEntries.length; i++) {
+        litersUsed += fuelEntries[i].liters;
+    }
+
+    if (litersUsed > 0 && distanceCovered > 0) {
+        mileage = (distanceCovered / litersUsed).toFixed(1);
+    }
+}
+document.getElementById('stat-mileage').innerText = `${mileage} km/l`;
+
+// Standard UI Setup
 document.getElementById('total-spent').innerText = `₹${total.toLocaleString()}`;
 document.getElementById('stat-odo').innerText = `${maxKm.toLocaleString()} km`;
 document.getElementById('stat-fuel').innerText = `₹${fuel.toLocaleString()}`;
 document.getElementById('stat-service').innerText = `₹${service.toLocaleString()}`;
-document.getElementById('stat-avg').innerText = `₹${avgCost.toLocaleString()}`;
 document.getElementById('stat-count').innerText = expensesData.length;
 document.getElementById('history-count').innerText = `${expensesData.length} entries`;
 
-updateInsights(); // NEW: Refresh insights tool on load
+updateInsights();
 updateCharts();
 }
 
@@ -464,7 +692,6 @@ const isDark = document.documentElement.classList.contains('dark');
 const color = isDark ? '#94a3b8' : '#64748b';
 const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
 
-// Category Chart Data
 const catData = {};
 expensesData.forEach(i => {
 if(i.cost > 0) catData[i.category] = (catData[i.category] || 0) + i.cost;
@@ -488,7 +715,6 @@ cutout: '70%'
 }
 });
 
-// Timeline Chart Data
 const timeMap = {};
 [...expensesData].reverse().forEach(item => {
 if(item.cost > 0) {
@@ -524,8 +750,7 @@ plugins: { legend: { display: false } }
 });
 }
 
-// Start app
-init();
+initApp();
 </script>
 </body>
 </html>
