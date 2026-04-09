@@ -1,537 +1,479 @@
 <!DOCTYPE html>
 <html lang="en" class="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>IGNIS Zeta Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: { darkBg: '#0f172a', darkCard: '#1e293b' }
-                }
-            }
-        }
-    </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
-        .dark .glass { background: rgba(15, 23, 42, 0.8); }
-        .tab-active { color: #3b82f6; transform: translateY(-2px); }
-        .tab-active::after { content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: #3b82f6; border-radius: 50%; }
-        
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        * { transition: background-color 0.2s ease, border-color 0.2s ease; }
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<script>
+tailwind.config = {
+darkMode: 'class',
+theme: {
+extend: {
+colors: { darkBg: '#0f172a', darkCard: '#1e293b' }
+}
+}
+}
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+.glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
+.dark .glass { background: rgba(15, 23, 42, 0.8); }
+.tab-active { color: #3b82f6; transform: translateY(-2px); }
+.tab-active::after { content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: #3b82f6; border-radius: 50%; }
 
-        @keyframes bounce-car {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-4px); }
-        }
-        @keyframes smoke-fade {
-            0% { transform: translate(0, 0) scale(1); opacity: 0.8; }
-            100% { transform: translate(-30px, -15px) scale(2.5); opacity: 0; }
-        }
-        .animate-car { animation: bounce-car 0.4s ease-in-out infinite; }
-        .animate-smoke-1 { animation: smoke-fade 1s ease-out infinite; }
-        .animate-smoke-2 { animation: smoke-fade 1.2s ease-out infinite 0.3s; }
-        .animate-smoke-3 { animation: smoke-fade 0.9s ease-out infinite 0.6s; }
-    </style>
+/* Hide scrollbars */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Smooth transition for theme switching */
+* { transition: background-color 0.2s ease, border-color 0.2s ease; }
+
+/* Car & Smoke Animations */
+@keyframes bounce-car {
+0%, 100% { transform: translateY(0); }
+50% { transform: translateY(-4px); }
+}
+@keyframes smoke-fade {
+0% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+100% { transform: translate(-30px, -15px) scale(2.5); opacity: 0; }
+}
+.animate-car { animation: bounce-car 0.4s ease-in-out infinite; }
+.animate-smoke-1 { animation: smoke-fade 1s ease-out infinite; }
+.animate-smoke-2 { animation: smoke-fade 1.2s ease-out infinite 0.3s; }
+.animate-smoke-3 { animation: smoke-fade 0.9s ease-out infinite 0.6s; }
+</style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen pb-24">
 
-    <header class="glass sticky top-0 z-30 border-b border-slate-200 dark:border-slate-800 px-4 py-3">
-        <div class="max-w-5xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-500/30">
-                    <i class="fa-solid fa-car-side text-white"></i>
-                </div>
-                <h1 class="font-extrabold text-lg tracking-tight">IGNIS <span class="text-blue-600">Zeta</span></h1>
-            </div>
-            <button id="theme-toggle" class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-800">
-                <i class="fa-solid fa-moon dark:hidden"></i>
-                <i class="fa-solid fa-sun hidden dark:block text-yellow-400"></i>
-            </button>
-        </div>
-    </header>
+<header class="glass sticky top-0 z-30 border-b border-slate-200 dark:border-slate-800 px-4 py-3">
+<div class="max-w-5xl mx-auto flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-500/30">
+<i class="fa-solid fa-car-side text-white"></i>
+</div>
+<h1 class="font-extrabold text-lg tracking-tight">IGNIS <span class="text-blue-600">Zeta</span></h1>
+</div>
+<button id="theme-toggle" class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-800">
+<i class="fa-solid fa-moon dark:hidden"></i>
+<i class="fa-solid fa-sun hidden dark:block text-yellow-400"></i>
+</button>
+</div>
+</header>
 
-    <main class="max-w-5xl mx-auto px-4 pt-6">
-        
-        <div id="view-dashboard" class="space-y-6">
-            <div class="bg-gradient-to-br from-blue-600 to-blue-700 p-6 rounded-[2rem] text-white shadow-xl shadow-blue-500/20 relative overflow-hidden">
-                <i class="fa-solid fa-wallet absolute -right-4 -bottom-4 text-8xl opacity-10"></i>
-                <p class="text-xs font-bold opacity-80 uppercase tracking-widest">Total Investment</p>
-                <h2 class="text-4xl font-black mt-1" id="total-spent">₹0</h2>
-                <div class="flex gap-4 mt-6">
-                    <div class="bg-white/10 px-3 py-2 rounded-xl backdrop-blur-md">
-                        <p class="text-[10px] uppercase font-bold opacity-70">Odometer</p>
-                        <p class="text-sm font-bold" id="stat-odo">0 km</p>
-                    </div>
-                    <div class="bg-white/10 px-3 py-2 rounded-xl backdrop-blur-md">
-                        <p class="text-[10px] uppercase font-bold opacity-70">Records</p>
-                        <p class="text-sm font-bold" id="stat-count">0</p>
-                    </div>
-                </div>
-            </div>
+<main class="max-w-5xl mx-auto px-4 pt-6">
 
-            <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-                <div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase">Fuel</p>
-                    <p class="text-lg font-black text-orange-500" id="stat-fuel">₹0</p>
-                </div>
-                <div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase">Service</p>
-                    <p class="text-lg font-black text-emerald-500" id="stat-service">₹0</p>
-                </div>
-                <div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase">Avg Cost</p>
-                    <p class="text-lg font-black text-blue-500" id="stat-avg">₹0</p>
-                </div>
-            </div>
+<div id="view-dashboard" class="space-y-6">
+<div class="bg-gradient-to-br from-blue-600 to-blue-700 p-6 rounded-[2rem] text-white shadow-xl shadow-blue-500/20 relative overflow-hidden">
+<i class="fa-solid fa-wallet absolute -right-4 -bottom-4 text-8xl opacity-10"></i>
+<p class="text-xs font-bold opacity-80 uppercase tracking-widest">Total Investment</p>
+<h2 class="text-4xl font-black mt-1" id="total-spent">₹0</h2>
+<div class="flex gap-4 mt-6">
+<div class="bg-white/10 px-3 py-2 rounded-xl backdrop-blur-md">
+<p class="text-[10px] uppercase font-bold opacity-70">Odometer</p>
+<p class="text-sm font-bold" id="stat-odo">0 km</p>
+</div>
+<div class="bg-white/10 px-3 py-2 rounded-xl backdrop-blur-md">
+<p class="text-[10px] uppercase font-bold opacity-70">Records</p>
+<p class="text-sm font-bold" id="stat-count">0</p>
+</div>
+</div>
+</div>
 
-            <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xs font-bold uppercase text-slate-400 flex items-center gap-2">
-                        <i class="fa-solid fa-magnifying-glass-chart"></i> Category Insights
-                    </h3>
-                    <select id="insight-category" class="bg-slate-100 dark:bg-slate-800 text-xs font-bold py-1.5 px-3 rounded-lg outline-none dark:text-white appearance-none cursor-pointer border border-slate-200 dark:border-slate-700">
-                        <option value="fuel">⛽ Fuel</option>
-                        <option value="wash">🧼 Wash</option>
-                        <option value="service">⚙️ Service</option>
-                        <option value="tyre_pressure">💨 Tyre Air</option>
-                        <option value="wheel_alignment">🔧 Alignment</option>
-                        <option value="wheel_rotation">🔄 Rotation</option>
-                        <option value="tyre_change">🛞 Tyre Change</option>
-                        <option value="wiper_change">🌧️ Wipers</option>
-                        <option value="insurance">🛡️ Insurance</option>
-                        <option value="puc">📜 PUC</option>
-                        <option value="other">📝 Other</option>
-                    </select>
-                </div>
-                <div class="flex items-end justify-between bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/50">
-                    <div>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Total Spent</p>
-                        <p class="text-2xl font-black text-blue-600 dark:text-blue-400" id="insight-total">₹0</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-sm font-black dark:text-slate-200" id="insight-count">0</p>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase">Entries</p>
-                    </div>
-                </div>
-            </div>
+<div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+<div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+<p class="text-[10px] font-bold text-slate-400 uppercase">Fuel</p>
+<p class="text-lg font-black text-orange-500" id="stat-fuel">₹0</p>
+</div>
+<div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+<p class="text-[10px] font-bold text-slate-400 uppercase">Service</p>
+<p class="text-lg font-black text-emerald-500" id="stat-service">₹0</p>
+</div>
+<div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+<p class="text-[10px] font-bold text-slate-400 uppercase">Avg Cost</p>
+<p class="text-lg font-black text-blue-500" id="stat-avg">₹0</p>
+</div>
+</div>
 
-            <div class="space-y-4">
-                <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-100 dark:border-slate-800">
-                    <h3 class="text-xs font-bold uppercase text-slate-400 mb-4">Expense Distribution</h3>
-                    <div class="h-48"><canvas id="categoryChart"></canvas></div>
-                </div>
-                <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-100 dark:border-slate-800">
-                    <h3 class="text-xs font-bold uppercase text-slate-400 mb-4">Spending Timeline</h3>
-                    <div class="h-48"><canvas id="timelineChart"></canvas></div>
-                </div>
-            </div>
-        </div>
+<div class="space-y-4">
+<div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-100 dark:border-slate-800">
+<h3 class="text-xs font-bold uppercase text-slate-400 mb-4">Expense Distribution</h3>
+<div class="h-48"><canvas id="categoryChart"></canvas></div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-100 dark:border-slate-800">
+<h3 class="text-xs font-bold uppercase text-slate-400 mb-4">Spending Timeline</h3>
+<div class="h-48"><canvas id="timelineChart"></canvas></div>
+</div>
+</div>
+</div>
 
-        <div id="view-add" class="hidden space-y-6">
-            <h2 class="text-2xl font-black">Add Record</h2>
-            <form id="expense-form" class="space-y-4">
-                <div class="grid grid-cols-1 gap-4">
-                    <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase">Category</label>
-                        <select id="category" class="w-full bg-transparent font-bold py-2 outline-none dark:text-white appearance-none">
-                            <option value="fuel" class="text-slate-800">⛽ Fuel</option>
-                            <option value="wash" class="text-slate-800">🧼 Wash</option>
-                            <option value="service" class="text-slate-800">⚙️ Service</option>
-                            <option value="tyre_pressure" class="text-slate-800">💨 Tyre Air</option>
-                            <option value="wheel_alignment" class="text-slate-800">🔧 Wheel Alignment</option>
-                            <option value="wheel_rotation" class="text-slate-800">🔄 Wheel Rotation</option>
-                            <option value="tyre_change" class="text-slate-800">🛞 Tyre Change</option>
-                            <option value="wiper_change" class="text-slate-800">🌧️ Wiper Change</option>
-                            <option value="insurance" class="text-slate-800">🛡️ Insurance</option>
-                            <option value="puc" class="text-slate-800">📜 PUC (Pollution)</option>
-                            <option value="other" class="text-slate-800">📝 Other</option>
-                        </select>
-                    </div>
+<div id="view-add" class="hidden space-y-6">
+<h2 class="text-2xl font-black">Add Record</h2>
+<form id="expense-form" class="space-y-4">
+<div class="grid grid-cols-1 gap-4">
+<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+<label class="text-[10px] font-bold text-slate-400 uppercase">Category</label>
+<select id="category" class="w-full bg-transparent font-bold py-2 outline-none dark:text-white appearance-none">
+<option value="fuel" class="text-slate-800">⛽ Fuel</option>
+<option value="wash" class="text-slate-800">🧼 Wash</option>
+<option value="service" class="text-slate-800">⚙️ Service</option>
+<option value="tyre_pressure" class="text-slate-800">💨 Tyre Air</option>
+<option value="wheel_alignment" class="text-slate-800">🔧 Wheel Alignment</option>
+<option value="wheel_rotation" class="text-slate-800">🔄 Wheel Rotation</option>
+<option value="tyre_change" class="text-slate-800">🛞 Tyre Change</option>
+<option value="wiper_change" class="text-slate-800">🌧️ Wiper Change</option>
+<option value="insurance" class="text-slate-800">🛡️ Insurance</option>
+<option value="other" class="text-slate-800">📝 Other</option>
+</select>
+</div>
 
-                    <div id="dynamic-fields" class="hidden bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700"></div>
+<div id="dynamic-fields" class="hidden bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
+</div>
 
-                    <div class="flex gap-4">
-                        <div class="flex-1 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase">Date</label>
-                            <input type="date" id="date" required class="w-full bg-transparent font-bold py-1 outline-none dark:text-white">
-                        </div>
-                        <div class="flex-1 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase">Odo (KM)</label>
-                            <input type="number" id="km" required placeholder="12500" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white">
-                        </div>
-                    </div>
-                    
-                    <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase">Cost (₹)</label>
-                        <input type="number" id="cost" placeholder="0" class="w-full bg-transparent font-black text-2xl text-blue-600 outline-none dark:text-blue-400">
-                    </div>
+<div class="flex gap-4">
+<div class="flex-1 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+<label class="text-[10px] font-bold text-slate-400 uppercase">Date</label>
+<input type="date" id="date" required class="w-full bg-transparent font-bold py-1 outline-none dark:text-white">
+</div>
+<div class="flex-1 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+<label class="text-[10px] font-bold text-slate-400 uppercase">Odo (KM)</label>
+<input type="number" id="km" required placeholder="12500" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white">
+</div>
+</div>
 
-                    <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase">Notes (Optional)</label>
-                        <input type="text" id="notes" placeholder="Any specific details..." class="w-full bg-transparent font-bold py-1 outline-none dark:text-white">
-                    </div>
-                </div>
-                <button type="submit" id="submit-btn" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl shadow-xl shadow-blue-500/30 active:scale-95 transition-transform">
-                    SAVE ENTRY
-                </button>
-                <p id="form-error" class="text-red-500 text-xs hidden text-center mt-2"></p>
-            </form>
-        </div>
+<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+<label class="text-[10px] font-bold text-slate-400 uppercase">Cost (₹)</label>
+<input type="number" id="cost" placeholder="0" class="w-full bg-transparent font-black text-2xl text-blue-600 outline-none dark:text-blue-400">
+</div>
+</div>
+<button type="submit" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl shadow-xl shadow-blue-500/30 active:scale-95 transition-transform">
+SAVE ENTRY
+</button>
+</form>
+</div>
 
-        <div id="view-history" class="hidden space-y-4">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-black">Timeline</h2>
-                <span class="text-xs font-bold text-slate-400" id="history-count">0 items</span>
-            </div>
-            <div id="history-list" class="space-y-3">
-                </div>
-        </div>
-    </main>
+<div id="view-history" class="hidden space-y-4">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-2xl font-black">Timeline</h2>
+<span class="text-xs font-bold text-slate-400" id="history-count">0 items</span>
+</div>
+<div id="history-list" class="space-y-3">
+</div>
+</div>
+</main>
 
-    <nav class="fixed bottom-0 left-0 right-0 glass border-t border-slate-200 dark:border-slate-800 px-6 py-4 flex justify-between items-center z-40">
-        <button onclick="switchTab('dashboard')" id="btn-dash" class="relative flex flex-col items-center gap-1 tab-active">
-            <i class="fa-solid fa-house-chimney text-xl"></i>
-            <span class="text-[10px] font-bold uppercase">Home</span>
-        </button>
-        
-        <button onclick="switchTab('add')" id="btn-add" class="bg-blue-600 w-14 h-14 rounded-full -mt-12 border-4 border-slate-50 dark:border-slate-950 flex items-center justify-center shadow-xl shadow-blue-500/40 text-white active:scale-90 transition-transform">
-            <i class="fa-solid fa-plus text-2xl"></i>
-        </button>
+<nav class="fixed bottom-0 left-0 right-0 glass border-t border-slate-200 dark:border-slate-800 px-6 py-4 flex justify-between items-center z-40">
+<button onclick="switchTab('dashboard')" id="btn-dash" class="relative flex flex-col items-center gap-1 tab-active">
+<i class="fa-solid fa-house-chimney text-xl"></i>
+<span class="text-[10px] font-bold uppercase">Home</span>
+</button>
 
-        <button onclick="switchTab('history')" id="btn-hist" class="relative flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500">
-            <i class="fa-solid fa-clock-rotate-left text-xl"></i>
-            <span class="text-[10px] font-bold uppercase">Log</span>
-        </button>
-    </nav>
+<button onclick="switchTab('add')" id="btn-add" class="bg-blue-600 w-14 h-14 rounded-full -mt-12 border-4 border-slate-50 dark:border-slate-950 flex items-center justify-center shadow-xl shadow-blue-500/40 text-white active:scale-90 transition-transform">
+<i class="fa-solid fa-plus text-2xl"></i>
+</button>
 
-    <div id="loading-overlay" class="fixed inset-0 bg-slate-50 dark:bg-slate-950 z-50 flex flex-col items-center justify-center transition-opacity duration-500">
-        <div class="relative flex items-center justify-center mb-6 w-32 h-16">
-            <div class="absolute left-4 top-8 w-3 h-3 bg-slate-300 dark:bg-slate-600 rounded-full animate-smoke-1 blur-[1px]"></div>
-            <div class="absolute left-2 top-7 w-2 h-2 bg-slate-300 dark:bg-slate-600 rounded-full animate-smoke-2 blur-[1px]"></div>
-            <div class="absolute left-6 top-6 w-4 h-4 bg-slate-300 dark:bg-slate-600 rounded-full animate-smoke-3 blur-[2px]"></div>
-            <div class="absolute right-6 animate-car">
-                <i class="fa-solid fa-car-side text-6xl text-blue-600 drop-shadow-lg"></i>
-            </div>
-            <div class="absolute bottom-0 left-0 right-0 h-1 bg-slate-200 dark:bg-slate-800 rounded overflow-hidden">
-                <div class="w-full h-full bg-slate-400 dark:bg-slate-500 origin-left animate-pulse"></div>
-            </div>
-        </div>
-        <p class="font-black text-slate-400 tracking-widest uppercase text-xs animate-pulse">Loading Ignis Zeta...</p>
-    </div>
+<button onclick="switchTab('history')" id="btn-hist" class="relative flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500">
+<i class="fa-solid fa-clock-rotate-left text-xl"></i>
+<span class="text-[10px] font-bold uppercase">Log</span>
+</button>
+</nav>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+<div id="loading-overlay" class="fixed inset-0 bg-slate-50 dark:bg-slate-950 z-50 flex flex-col items-center justify-center transition-opacity duration-500">
+<div class="relative flex items-center justify-center mb-6 w-32 h-16">
+<div class="absolute left-4 top-8 w-3 h-3 bg-slate-300 dark:bg-slate-600 rounded-full animate-smoke-1 blur-[1px]"></div>
+<div class="absolute left-2 top-7 w-2 h-2 bg-slate-300 dark:bg-slate-600 rounded-full animate-smoke-2 blur-[1px]"></div>
+<div class="absolute left-6 top-6 w-4 h-4 bg-slate-300 dark:bg-slate-600 rounded-full animate-smoke-3 blur-[2px]"></div>
 
-        // EXACT ORIGINAL FIREBASE CONFIG
-        const userProvidedConfig = {
-            apiKey: "AIzaSyAJ9K9fQ0ThMB7aXB6qNHr3_yLUdqJgnCM",
-            authDomain: "my-chain-reaction-game.firebaseapp.com",
-            projectId: "my-chain-reaction-game",
-            storageBucket: "my-chain-reaction-game.appspot.com",
-            messagingSenderId: "32751418407",
-            appId: "1:32751418407:web:ff8244007ef2b099d56202"
-        };
+<div class="absolute right-6 animate-car">
+<i class="fa-solid fa-car-side text-6xl text-blue-600 drop-shadow-lg"></i>
+</div>
 
-        const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'ignis_tracker_default';
-        const app = initializeApp(userProvidedConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+<div class="absolute bottom-0 left-0 right-0 h-1 bg-slate-200 dark:bg-slate-800 rounded overflow-hidden">
+<div class="w-full h-full bg-slate-400 dark:bg-slate-500 origin-left animate-pulse"></div>
+</div>
+</div>
+<p class="font-black text-slate-400 tracking-widest uppercase text-xs animate-pulse">Loading Ignis Zeta...</p>
+</div>
 
-        let currentUser = null;
-        let expensesData = [];
-        let categoryChart = null, timelineChart = null;
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Theme Toggle
-        const themeBtn = document.getElementById('theme-toggle');
-        const html = document.documentElement;
-        if (localStorage.getItem('theme') === 'dark') html.classList.add('dark');
+const config = {
+apiKey: "AIzaSyAJ9K9fQ0ThMB7aXB6qNHr3_yLUdqJgnCM",
+authDomain: "my-chain-reaction-game.firebaseapp.com",
+projectId: "my-chain-reaction-game",
+storageBucket: "my-chain-reaction-game.appspot.com",
+messagingSenderId: "32751418407",
+appId: "1:32751418407:web:ff8244007ef2b099d56202"
+};
 
-        themeBtn.onclick = () => {
-            html.classList.toggle('dark');
-            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-            updateCharts();
-        };
+const app = initializeApp(config);
+const auth = getAuth(app);
+const db = getFirestore(app);
+let expensesData = [];
+let categoryChart = null, timelineChart = null;
 
-        // Tab Switcher
-        window.switchTab = (tab) => {
-            document.getElementById('view-dashboard').classList.add('hidden');
-            document.getElementById('view-add').classList.add('hidden');
-            document.getElementById('view-history').classList.add('hidden');
-            document.getElementById(`view-${tab}`).classList.remove('hidden');
-            
-            ['dash', 'hist'].forEach(b => {
-                document.getElementById(`btn-${b}`).classList.remove('tab-active');
-                document.getElementById(`btn-${b}`).classList.add('text-slate-400', 'dark:text-slate-500');
-            });
+// Theme Toggle Logic
+const themeBtn = document.getElementById('theme-toggle');
+const html = document.documentElement;
 
-            if(tab !== 'add') {
-                const activeBtn = document.getElementById(`btn-${tab === 'dashboard' ? 'dash' : 'hist'}`);
-                activeBtn.classList.add('tab-active');
-                activeBtn.classList.remove('text-slate-400', 'dark:text-slate-500');
-            }
-            if(tab === 'dashboard') updateCharts();
-        };
+if (localStorage.getItem('theme') === 'dark') {
+html.classList.add('dark');
+}
 
-        document.getElementById('date').valueAsDate = new Date();
+themeBtn.onclick = () => {
+html.classList.toggle('dark');
+localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+updateCharts();
+};
 
-        // Exact Original Dynamic Fields Mapping
-        const categorySelect = document.getElementById('category');
-        const dynamicFields = document.getElementById('dynamic-fields');
+// Tab Switcher Logic
+window.switchTab = (tab) => {
+document.getElementById('view-dashboard').classList.add('hidden');
+document.getElementById('view-add').classList.add('hidden');
+document.getElementById('view-history').classList.add('hidden');
 
-        categorySelect.addEventListener('change', (e) => {
-            const val = e.target.value;
-            dynamicFields.innerHTML = ''; 
-            dynamicFields.classList.remove('hidden');
+document.getElementById(`view-${tab}`).classList.remove('hidden');
 
-            if (val === 'tyre_pressure') {
-                dynamicFields.innerHTML = `
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Front PSI</label><input type="number" id="dyn_front_psi" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="e.g. 32"></div>
-                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Rear PSI</label><input type="number" id="dyn_rear_psi" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="e.g. 32"></div>
-                    </div>`;
-            } else if (val === 'wiper_change') {
-                dynamicFields.innerHTML = `
-                    <label class="text-[10px] font-bold text-slate-400 uppercase">Position</label>
-                    <select id="dyn_wiper_pos" class="w-full bg-transparent font-bold py-2 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600">
-                        <option value="Front Both" class="text-slate-800">Front Both</option>
-                        <option value="Rear" class="text-slate-800">Rear Only</option>
-                        <option value="All" class="text-slate-800">All 3</option>
-                    </select>`;
-            } else if (val === 'tyre_change') {
-                dynamicFields.innerHTML = `
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Brand</label><input type="text" id="dyn_tyre_brand" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="e.g. Bridgestone"></div>
-                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Quantity</label><input type="number" id="dyn_tyre_qty" min="1" max="5" value="4" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600"></div>
-                    </div>`;
-            } else if (val === 'service') {
-                dynamicFields.innerHTML = `
-                    <label class="text-[10px] font-bold text-slate-400 uppercase">Service Type</label>
-                    <input type="text" id="dyn_service_type" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="e.g. General Service">`;
-            } else {
-                dynamicFields.classList.add('hidden');
-            }
-        });
+// Manage Bottom Nav Active States
+const btns = ['dash', 'hist'];
+btns.forEach(b => {
+document.getElementById(`btn-${b}`).classList.remove('tab-active');
+document.getElementById(`btn-${b}`).classList.add('text-slate-400', 'dark:text-slate-500');
+});
 
-        // Dashboard Insights Tool
-        const insightSelect = document.getElementById('insight-category');
-        insightSelect.addEventListener('change', updateInsights);
-        function updateInsights() {
-            const selectedCat = insightSelect.value;
-            let sum = 0, count = 0;
-            expensesData.forEach(item => {
-                if (item.category === selectedCat) {
-                    sum += item.cost || 0; count++;
-                }
-            });
-            document.getElementById('insight-total').innerText = `₹${sum.toLocaleString()}`;
-            document.getElementById('insight-count').innerText = count;
-        }
+if(tab !== 'add') {
+const activeBtn = document.getElementById(`btn-${tab === 'dashboard' ? 'dash' : 'hist'}`);
+activeBtn.classList.add('tab-active');
+activeBtn.classList.remove('text-slate-400', 'dark:text-slate-500');
+}
 
-        // EXACT ORIGINAL AUTH & DB CONNECTION
-        const initApp = async () => {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInAnonymously(auth); 
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (error) {
-                console.error("Auth error:", error);
-            }
-        };
+if(tab === 'dashboard') updateCharts();
+};
 
-        let unsubscribe = null;
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                fetchData();
-            } else {
-                currentUser = null;
-            }
-        });
+// Date input default
+document.getElementById('date').valueAsDate = new Date();
 
-        // EXACT ORIGINAL DB PATH (This brings your old data back!)
-        const fetchData = () => {
-            if (!currentUser) return;
-            const colRef = collection(db, 'artifacts', APP_ID, 'users', currentUser.uid, 'ignis_data');
-            
-            unsubscribe = onSnapshot(colRef, (snapshot) => {
-                expensesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                expensesData.sort((a, b) => new Date(b.date) - new Date(a.date));
-                updateUI();
-                
-                const loader = document.getElementById('loading-overlay');
-                loader.classList.add('opacity-0');
-                setTimeout(() => loader.classList.add('hidden', 'pointer-events-none'), 500);
-            }, (error) => {
-                console.error("Fetch error:", error);
-                document.getElementById('loading-overlay').classList.add('hidden');
-            });
-        };
+// Dynamic Form Fields Logic
+const categorySelect = document.getElementById('category');
+const dynamicFields = document.getElementById('dynamic-fields');
 
-        // ORIGINAL SAVE LOGIC
-        document.getElementById('expense-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!currentUser) return;
+categorySelect.addEventListener('change', (e) => {
+const val = e.target.value;
+dynamicFields.innerHTML = ''; // clear old
+dynamicFields.classList.remove('hidden');
 
-            const btn = document.getElementById('submit-btn');
-            btn.disabled = true;
-            btn.innerHTML = 'SAVING...';
+if (val === 'wiper_change') {
+dynamicFields.innerHTML = `
+                   <label class="text-[10px] font-bold text-slate-400 uppercase">Wiper Position</label>
+                   <select id="dyn_wiper_pos" class="w-full bg-transparent font-bold py-2 outline-none dark:text-white appearance-none">
+                       <option value="Front Only" class="text-slate-800">Front Both</option>
+                       <option value="Back Only" class="text-slate-800">Back/Rear Only</option>
+                       <option value="Front and Back" class="text-slate-800">Front & Back (All)</option>
+                   </select>
+               `;
+} else if (val === 'tyre_change') {
+dynamicFields.innerHTML = `
+                   <label class="text-[10px] font-bold text-slate-400 uppercase">Number of Tyres Replaced</label>
+                   <input type="number" id="dyn_tyre_qty" min="1" max="5" value="4" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white">
+               `;
+} else {
+dynamicFields.classList.add('hidden');
+}
+});
 
-            const category = categorySelect.value;
-            const data = {
-                category: category,
-                date: document.getElementById('date').value,
-                km: parseInt(document.getElementById('km').value) || 0,
-                cost: parseFloat(document.getElementById('cost').value) || 0,
-                notes: document.getElementById('notes').value,
-                createdAt: new Date().toISOString()
-            };
+// Data Management (Firebase)
+const init = async () => {
+try {
+const user = await signInAnonymously(auth);
+const colRef = collection(db, 'artifacts', 'ignis_v3', 'users', user.user.uid, 'data');
 
-            // Capture exact original specific fields
-            if (category === 'tyre_pressure') {
-                data.front_psi = document.getElementById('dyn_front_psi')?.value || '';
-                data.rear_psi = document.getElementById('dyn_rear_psi')?.value || '';
-            } else if (category === 'wiper_change') {
-                data.position = document.getElementById('dyn_wiper_pos')?.value || '';
-            } else if (category === 'tyre_change') {
-                data.brand = document.getElementById('dyn_tyre_brand')?.value || '';
-                data.quantity = document.getElementById('dyn_tyre_qty')?.value || '';
-            } else if (category === 'service') {
-                data.service_type = document.getElementById('dyn_service_type')?.value || '';
-            }
+onSnapshot(colRef, (snap) => {
+expensesData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+expensesData.sort((a, b) => new Date(b.date) - new Date(a.date));
+updateUI();
 
-            try {
-                // Exact original save path
-                const colRef = collection(db, 'artifacts', APP_ID, 'users', currentUser.uid, 'ignis_data');
-                await addDoc(colRef, data);
-                
-                document.getElementById('cost').value = '';
-                document.getElementById('notes').value = '';
-                dynamicFields.innerHTML = '';
-                dynamicFields.classList.add('hidden');
-                categorySelect.value = 'fuel';
-                switchTab('dashboard');
-                
-            } catch (error) {
-                console.error("Save error:", error);
-                document.getElementById('form-error').textContent = "Failed to save record.";
-                document.getElementById('form-error').classList.remove('hidden');
-            } finally {
-                btn.innerHTML = 'SAVE ENTRY';
-                btn.disabled = false;
-            }
-        });
+// Hide loading overlay gracefully
+const loader = document.getElementById('loading-overlay');
+loader.classList.add('opacity-0');
+setTimeout(() => loader.classList.add('hidden', 'pointer-events-none'), 500);
+});
 
-        // Exact Original Delete logic
-        window.del = async (id) => {
-            if (!currentUser || !confirm("Delete this record?")) return;
-            try {
-                await deleteDoc(doc(db, 'artifacts', APP_ID, 'users', currentUser.uid, 'ignis_data', id));
-            } catch (e) { console.error("Delete failed", e); }
-        };
+document.getElementById('expense-form').onsubmit = async (e) => {
+e.preventDefault();
 
-        const categoryEmojis = {
-            fuel: '⛽', wash: '🧼', service: '⚙️', tyre_pressure: '💨', wheel_alignment: '🔧', 
-            wheel_rotation: '🔄', tyre_change: '🛞', wiper_change: '🌧️', insurance: '🛡️', other: '📝', puc: '📜'
-        };
+// Gather core data
+const dataObj = {
+category: categorySelect.value,
+date: document.getElementById('date').value,
+km: parseInt(document.getElementById('km').value) || 0,
+cost: parseFloat(document.getElementById('cost').value) || 0,
+};
 
-        function updateUI() {
-            let total = 0, fuel = 0, service = 0, maxKm = 0;
-            const historyList = document.getElementById('history-list');
-            historyList.innerHTML = '';
+// Check for dynamic inputs
+if (dataObj.category === 'wiper_change') {
+dataObj.details = document.getElementById('dyn_wiper_pos')?.value;
+} else if (dataObj.category === 'tyre_change') {
+dataObj.details = document.getElementById('dyn_tyre_qty')?.value + " Tyres";
+}
 
-            expensesData.forEach(item => {
-                total += item.cost || 0;
-                if(item.category === 'fuel') fuel += item.cost || 0;
-                if(item.category === 'service') service += item.cost || 0;
-                if(item.km > maxKm) maxKm = item.km;
+await addDoc(colRef, dataObj);
 
-                const emoji = categoryEmojis[item.category] || '📝';
-                let catName = item.category.replace('_', ' ');
-                
-                // Construct string from original database fields
-                let details = item.notes || '';
-                if (item.category === 'tyre_pressure' && (item.front_psi || item.rear_psi)) {
-                    details = `F:${item.front_psi || '?'} R:${item.rear_psi || '?'} | ${details}`;
-                } else if (item.category === 'wiper_change' && item.position) {
-                    details = `${item.position} | ${details}`;
-                } else if (item.category === 'tyre_change' && item.brand) {
-                    details = `${item.quantity}x ${item.brand} | ${details}`;
-                } else if (item.category === 'service' && item.service_type) {
-                    details = `${item.service_type} | ${details}`;
-                }
+switchTab('dashboard');
+e.target.reset();
+document.getElementById('date').valueAsDate = new Date();
+dynamicFields.classList.add('hidden');
+};
 
-                historyList.innerHTML += `
-                    <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 flex justify-between items-center group">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-lg">
-                                ${emoji}
-                            </div>
-                            <div>
-                                <p class="font-bold text-sm capitalize">${catName}</p>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase">${new Date(item.date).toLocaleDateString()} • ${item.km} KM</p>
-                                ${details.trim() !== '|' && details.trim() !== '' ? `<p class="text-[10px] text-slate-500 mt-1 line-clamp-1 max-w-[150px]">${details.replace(/^ \|\ | \| $/g, '')}</p>` : ''}
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="font-black text-blue-600 dark:text-blue-400">₹${item.cost}</p>
-                            <button onclick="window.del('${item.id}')" class="text-xs text-red-400 dark:text-red-500 font-bold opacity-0 group-hover:opacity-100 transition-opacity">Delete</button>
-                        </div>
-                    </div>
-                `;
-            });
+window.del = async (id) => {
+if(confirm("Delete this record?")) {
+await deleteDoc(doc(db, 'artifacts', 'ignis_v3', 'users', user.user.uid, 'data', id));
+}
+};
 
-            const avgCost = expensesData.length > 0 ? Math.round(total / expensesData.length) : 0;
+} catch (error) {
+console.error("Firebase Error:", error);
+alert("Could not connect to database.");
+document.getElementById('loading-overlay').classList.add('hidden');
+}
+};
 
-            document.getElementById('total-spent').innerText = `₹${total.toLocaleString()}`;
-            document.getElementById('stat-odo').innerText = `${maxKm.toLocaleString()} km`;
-            document.getElementById('stat-fuel').innerText = `₹${fuel.toLocaleString()}`;
-            document.getElementById('stat-service').innerText = `₹${service.toLocaleString()}`;
-            document.getElementById('stat-avg').innerText = `₹${avgCost.toLocaleString()}`;
-            document.getElementById('stat-count').innerText = expensesData.length;
-            document.getElementById('history-count').innerText = `${expensesData.length} entries`;
-            
-            updateInsights();
-            updateCharts();
-        }
+const categoryEmojis = {
+fuel: '⛽', 
+wash: '🧼', 
+service: '⚙️', 
+tyre_pressure: '💨', 
+wheel_alignment: '🔧', 
+wheel_rotation: '🔄', 
+tyre_change: '🛞', 
+wiper_change: '🌧️', 
+insurance: '🛡️', 
+other: '📝'
+};
 
-        function updateCharts() {
-            const isDark = document.documentElement.classList.contains('dark');
-            const color = isDark ? '#94a3b8' : '#64748b';
-            const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
-            
-            const catData = {};
-            expensesData.forEach(i => {
-                if(i.cost > 0) catData[i.category] = (catData[i.category] || 0) + i.cost;
-            });
+function updateUI() {
+let total = 0, fuel = 0, service = 0, maxKm = 0;
+const historyList = document.getElementById('history-list');
+historyList.innerHTML = '';
 
-            if(categoryChart) categoryChart.destroy();
-            categoryChart = new Chart(document.getElementById('categoryChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(catData).map(k => k.replace('_', ' ').toUpperCase()),
-                    datasets: [{ 
-                        data: Object.values(catData), 
-                        backgroundColor: ['#3b82f6', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#64748b', '#0ea5e9', '#f43f5e'], 
-                        borderWidth: 0 
-                    }]
-                },
-                options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color, font: { weight: 'bold', size: 10 } } } }, cutout: '70%' }
-            });
+expensesData.forEach(item => {
+total += item.cost;
+if(item.category === 'fuel') fuel += item.cost;
+if(item.category === 'service') service += item.cost;
+if(item.km > maxKm) maxKm = item.km;
 
-            const timeMap = {};
-            [...expensesData].reverse().forEach(item => {
-                if(item.cost > 0) {
-                    const d = new Date(item.date).toLocaleDateString('en-US',
+// Create Mobile Cards for History
+const emoji = categoryEmojis[item.category] || '📝';
+let catName = item.category.replace('_', ' ');
+
+// Append sub-details if they exist (like "Front Only" for wipers)
+if(item.details) {
+catName += ` (${item.details})`;
+}
+
+historyList.innerHTML += `
+                   <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 flex justify-between items-center group">
+                       <div class="flex items-center gap-3">
+                           <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-lg">
+                               ${emoji}
+                           </div>
+                           <div>
+                               <p class="font-bold text-sm capitalize">${catName}</p>
+                               <p class="text-[10px] font-bold text-slate-400 uppercase">${new Date(item.date).toLocaleDateString()} • ${item.km} KM</p>
+                           </div>
+                       </div>
+                       <div class="text-right">
+                           <p class="font-black text-blue-600 dark:text-blue-400">₹${item.cost}</p>
+                           <button onclick="window.del('${item.id}')" class="text-xs text-red-400 dark:text-red-500 font-bold opacity-0 group-hover:opacity-100 transition-opacity">Delete</button>
+                       </div>
+                   </div>
+               `;
+});
+
+const avgCost = expensesData.length > 0 ? Math.round(total / expensesData.length) : 0;
+
+document.getElementById('total-spent').innerText = `₹${total.toLocaleString()}`;
+document.getElementById('stat-odo').innerText = `${maxKm.toLocaleString()} km`;
+document.getElementById('stat-fuel').innerText = `₹${fuel.toLocaleString()}`;
+document.getElementById('stat-service').innerText = `₹${service.toLocaleString()}`;
+document.getElementById('stat-avg').innerText = `₹${avgCost.toLocaleString()}`;
+document.getElementById('stat-count').innerText = expensesData.length;
+document.getElementById('history-count').innerText = `${expensesData.length} entries`;
+
+updateCharts();
+}
+
+function updateCharts() {
+const isDark = document.documentElement.classList.contains('dark');
+const color = isDark ? '#94a3b8' : '#64748b';
+const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+
+// Category Chart Data
+const catData = {};
+expensesData.forEach(i => {
+if(i.cost > 0) catData[i.category] = (catData[i.category] || 0) + i.cost;
+});
+
+if(categoryChart) categoryChart.destroy();
+categoryChart = new Chart(document.getElementById('categoryChart'), {
+type: 'doughnut',
+data: {
+labels: Object.keys(catData).map(k => k.replace('_', ' ').toUpperCase()),
+datasets: [{ 
+data: Object.values(catData), 
+backgroundColor: ['#3b82f6', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#64748b', '#0ea5e9', '#f43f5e'], 
+borderWidth: 0 
+}]
+},
+options: { 
+maintainAspectRatio: false, 
+plugins: { legend: { position: 'right', labels: { color, font: { weight: 'bold', size: 10 } } } }, 
+cutout: '70%' 
+}
+});
+
+// Timeline Chart Data
+const timeMap = {};
+[...expensesData].reverse().forEach(item => {
+if(item.cost > 0) {
+const d = new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+timeMap[d] = (timeMap[d] || 0) + item.cost;
+}
+});
+
+if(timelineChart) timelineChart.destroy();
+timelineChart = new Chart(document.getElementById('timelineChart'), {
+type: 'line',
+data: {
+labels: Object.keys(timeMap),
+datasets: [{
+label: 'Spent',
+data: Object.values(timeMap),
+borderColor: '#3b82f6',
+backgroundColor: 'rgba(59, 130, 246, 0.1)',
+fill: true,
+tension: 0.4,
+pointRadius: 4,
+pointBackgroundColor: '#3b82f6'
+}]
+},
+options: {
+maintainAspectRatio: false,
+scales: {
+y: { grid: { color: gridColor }, ticks: { color, font: {size: 10} } },
+x: { grid: { display: false }, ticks: { color, font: {size: 10} } }
+},
+plugins: { legend: { display: false } }
+}
+});
+}
+
+// Start app
+init();
+</script>
+</body>
+</html>
