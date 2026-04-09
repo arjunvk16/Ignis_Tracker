@@ -44,7 +44,6 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen pb-24">
 
-    <!-- Mobile Header -->
     <header class="glass sticky top-0 z-30 border-b border-slate-200 dark:border-slate-800 px-4 py-3">
         <div class="max-w-5xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
@@ -60,10 +59,8 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="max-w-5xl mx-auto px-4 pt-6">
         
-        <!-- Dashboard View -->
         <div id="view-dashboard" class="space-y-6">
             <div class="bg-gradient-to-br from-blue-600 to-blue-700 p-6 rounded-[2rem] text-white shadow-xl shadow-blue-500/20 relative overflow-hidden">
                 <i class="fa-solid fa-wallet absolute -right-4 -bottom-4 text-8xl opacity-10"></i>
@@ -81,7 +78,6 @@
                 </div>
             </div>
 
-            <!-- Stats Grid -->
             <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                 <div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
                     <p class="text-[10px] font-bold text-slate-400 uppercase">Fuel</p>
@@ -97,7 +93,6 @@
                 </div>
             </div>
 
-            <!-- Category Insights Tool -->
             <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xs font-bold uppercase text-slate-400 flex items-center gap-2">
@@ -113,6 +108,7 @@
                         <option value="tyre_change">🛞 Tyre Change</option>
                         <option value="wiper_change">🌧️ Wipers</option>
                         <option value="insurance">🛡️ Insurance</option>
+                        <option value="puc">📜 PUC</option>
                         <option value="other">📝 Other</option>
                     </select>
                 </div>
@@ -128,7 +124,6 @@
                 </div>
             </div>
 
-            <!-- Charts -->
             <div class="space-y-4">
                 <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-100 dark:border-slate-800">
                     <h3 class="text-xs font-bold uppercase text-slate-400 mb-4">Expense Distribution</h3>
@@ -141,7 +136,6 @@
             </div>
         </div>
 
-        <!-- Add Entry View -->
         <div id="view-add" class="hidden space-y-6">
             <h2 class="text-2xl font-black">Add Record</h2>
             <form id="expense-form" class="space-y-4">
@@ -158,6 +152,7 @@
                             <option value="tyre_change" class="text-slate-800">🛞 Tyre Change</option>
                             <option value="wiper_change" class="text-slate-800">🌧️ Wiper Change</option>
                             <option value="insurance" class="text-slate-800">🛡️ Insurance</option>
+                            <option value="puc" class="text-slate-800">📜 PUC (Pollution)</option>
                             <option value="other" class="text-slate-800">📝 Other</option>
                         </select>
                     </div>
@@ -192,19 +187,16 @@
             </form>
         </div>
 
-        <!-- History View -->
         <div id="view-history" class="hidden space-y-4">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-2xl font-black">Timeline</h2>
                 <span class="text-xs font-bold text-slate-400" id="history-count">0 items</span>
             </div>
             <div id="history-list" class="space-y-3">
-                <!-- Records populated here via JS -->
-            </div>
+                </div>
         </div>
     </main>
 
-    <!-- Bottom Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 glass border-t border-slate-200 dark:border-slate-800 px-6 py-4 flex justify-between items-center z-40">
         <button onclick="switchTab('dashboard')" id="btn-dash" class="relative flex flex-col items-center gap-1 tab-active">
             <i class="fa-solid fa-house-chimney text-xl"></i>
@@ -221,7 +213,6 @@
         </button>
     </nav>
 
-    <!-- Custom Animated Loading Overlay -->
     <div id="loading-overlay" class="fixed inset-0 bg-slate-50 dark:bg-slate-950 z-50 flex flex-col items-center justify-center transition-opacity duration-500">
         <div class="relative flex items-center justify-center mb-6 w-32 h-16">
             <div class="absolute left-4 top-8 w-3 h-3 bg-slate-300 dark:bg-slate-600 rounded-full animate-smoke-1 blur-[1px]"></div>
@@ -237,13 +228,12 @@
         <p class="font-black text-slate-400 tracking-widest uppercase text-xs animate-pulse">Loading Ignis Zeta...</p>
     </div>
 
-    <!-- Application Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // ORIGINAL FIREBASE CONFIG
+        // EXACT ORIGINAL FIREBASE CONFIG
         const userProvidedConfig = {
             apiKey: "AIzaSyAJ9K9fQ0ThMB7aXB6qNHr3_yLUdqJgnCM",
             authDomain: "my-chain-reaction-game.firebaseapp.com",
@@ -295,7 +285,7 @@
 
         document.getElementById('date').valueAsDate = new Date();
 
-        // Original Dynamic Fields Logic
+        // Exact Original Dynamic Fields Mapping
         const categorySelect = document.getElementById('category');
         const dynamicFields = document.getElementById('dynamic-fields');
 
@@ -321,13 +311,13 @@
             } else if (val === 'tyre_change') {
                 dynamicFields.innerHTML = `
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Brand</label><input type="text" id="dyn_tyre_brand" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="Brand"></div>
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Brand</label><input type="text" id="dyn_tyre_brand" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="e.g. Bridgestone"></div>
                         <div><label class="text-[10px] font-bold text-slate-400 uppercase">Quantity</label><input type="number" id="dyn_tyre_qty" min="1" max="5" value="4" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600"></div>
                     </div>`;
             } else if (val === 'service') {
                 dynamicFields.innerHTML = `
                     <label class="text-[10px] font-bold text-slate-400 uppercase">Service Type</label>
-                    <input type="text" id="dyn_service_type" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="e.g. General">`;
+                    <input type="text" id="dyn_service_type" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600" placeholder="e.g. General Service">`;
             } else {
                 dynamicFields.classList.add('hidden');
             }
@@ -348,7 +338,7 @@
             document.getElementById('insight-count').innerText = count;
         }
 
-        // ORIGINAL AUTH & INIT LOGIC
+        // EXACT ORIGINAL AUTH & DB CONNECTION
         const initApp = async () => {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -371,6 +361,7 @@
             }
         });
 
+        // EXACT ORIGINAL DB PATH (This brings your old data back!)
         const fetchData = () => {
             if (!currentUser) return;
             const colRef = collection(db, 'artifacts', APP_ID, 'users', currentUser.uid, 'ignis_data');
@@ -389,7 +380,7 @@
             });
         };
 
-        // Original Save Logic mapped to New UI
+        // ORIGINAL SAVE LOGIC
         document.getElementById('expense-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             if (!currentUser) return;
@@ -408,6 +399,7 @@
                 createdAt: new Date().toISOString()
             };
 
+            // Capture exact original specific fields
             if (category === 'tyre_pressure') {
                 data.front_psi = document.getElementById('dyn_front_psi')?.value || '';
                 data.rear_psi = document.getElementById('dyn_rear_psi')?.value || '';
@@ -421,6 +413,7 @@
             }
 
             try {
+                // Exact original save path
                 const colRef = collection(db, 'artifacts', APP_ID, 'users', currentUser.uid, 'ignis_data');
                 await addDoc(colRef, data);
                 
@@ -441,6 +434,7 @@
             }
         });
 
+        // Exact Original Delete logic
         window.del = async (id) => {
             if (!currentUser || !confirm("Delete this record?")) return;
             try {
@@ -467,16 +461,16 @@
                 const emoji = categoryEmojis[item.category] || '📝';
                 let catName = item.category.replace('_', ' ');
                 
-                // Original details string parsing logic
+                // Construct string from original database fields
                 let details = item.notes || '';
                 if (item.category === 'tyre_pressure' && (item.front_psi || item.rear_psi)) {
-                    details = `F:${item.front_psi || '?'} R:${item.rear_psi || '?'} ${details}`;
+                    details = `F:${item.front_psi || '?'} R:${item.rear_psi || '?'} | ${details}`;
                 } else if (item.category === 'wiper_change' && item.position) {
-                    details = `${item.position} ${details}`;
+                    details = `${item.position} | ${details}`;
                 } else if (item.category === 'tyre_change' && item.brand) {
-                    details = `${item.quantity}x ${item.brand} ${details}`;
+                    details = `${item.quantity}x ${item.brand} | ${details}`;
                 } else if (item.category === 'service' && item.service_type) {
-                    details = `${item.service_type} ${details}`;
+                    details = `${item.service_type} | ${details}`;
                 }
 
                 historyList.innerHTML += `
@@ -488,7 +482,7 @@
                             <div>
                                 <p class="font-bold text-sm capitalize">${catName}</p>
                                 <p class="text-[10px] font-bold text-slate-400 uppercase">${new Date(item.date).toLocaleDateString()} • ${item.km} KM</p>
-                                ${details ? `<p class="text-[10px] text-slate-500 mt-1 line-clamp-1 max-w-[150px]">${details}</p>` : ''}
+                                ${details.trim() !== '|' && details.trim() !== '' ? `<p class="text-[10px] text-slate-500 mt-1 line-clamp-1 max-w-[150px]">${details.replace(/^ \|\ | \| $/g, '')}</p>` : ''}
                             </div>
                         </div>
                         <div class="text-right">
@@ -540,39 +534,4 @@
             const timeMap = {};
             [...expensesData].reverse().forEach(item => {
                 if(item.cost > 0) {
-                    const d = new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                    timeMap[d] = (timeMap[d] || 0) + item.cost;
-                }
-            });
-
-            if(timelineChart) timelineChart.destroy();
-            timelineChart = new Chart(document.getElementById('timelineChart'), {
-                type: 'line',
-                data: {
-                    labels: Object.keys(timeMap),
-                    datasets: [{
-                        label: 'Spent',
-                        data: Object.values(timeMap),
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#3b82f6'
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { grid: { color: gridColor }, ticks: { color, font: {size: 10} } },
-                        x: { grid: { display: false }, ticks: { color, font: {size: 10} } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
-
-        initApp();
-    </script>
-</body>
-</html>
+                    const d = new Date(item.date).toLocaleDateString('en-US',
