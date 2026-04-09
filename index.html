@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>IGNIS Zeta</title>
+    <title>IGNIS Zeta Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -48,6 +48,7 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen pb-24">
 
+    <!-- Mobile Header -->
     <header class="glass sticky top-0 z-30 border-b border-slate-200 dark:border-slate-800 px-4 py-3">
         <div class="max-w-5xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
@@ -63,9 +64,12 @@
         </div>
     </header>
 
+    <!-- Main Content -->
     <main class="max-w-5xl mx-auto px-4 pt-6">
         
+        <!-- Dashboard View -->
         <div id="view-dashboard" class="space-y-6">
+            <!-- Total Card -->
             <div class="bg-gradient-to-br from-blue-600 to-blue-700 p-6 rounded-[2rem] text-white shadow-xl shadow-blue-500/20 relative overflow-hidden">
                 <i class="fa-solid fa-wallet absolute -right-4 -bottom-4 text-8xl opacity-10"></i>
                 <p class="text-xs font-bold opacity-80 uppercase tracking-widest">Total Investment</p>
@@ -82,6 +86,7 @@
                 </div>
             </div>
 
+            <!-- Stats Grid (Horizontal Scroll on Mobile) -->
             <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                 <div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
                     <p class="text-[10px] font-bold text-slate-400 uppercase">Fuel</p>
@@ -97,6 +102,38 @@
                 </div>
             </div>
 
+            <!-- NEW: Category Insights Tool -->
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xs font-bold uppercase text-slate-400 flex items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i> Category Insights
+                    </h3>
+                    <select id="insight-category" class="bg-slate-100 dark:bg-slate-800 text-xs font-bold py-1.5 px-3 rounded-lg outline-none dark:text-white appearance-none cursor-pointer border border-slate-200 dark:border-slate-700">
+                        <option value="fuel">⛽ Fuel</option>
+                        <option value="wash">🧼 Wash</option>
+                        <option value="service">⚙️ Service</option>
+                        <option value="tyre_pressure">💨 Tyre Air</option>
+                        <option value="wheel_alignment">🔧 Alignment</option>
+                        <option value="wheel_rotation">🔄 Rotation</option>
+                        <option value="tyre_change">🛞 Tyre Change</option>
+                        <option value="wiper_change">🌧️ Wipers</option>
+                        <option value="insurance">🛡️ Insurance</option>
+                        <option value="other">📝 Other</option>
+                    </select>
+                </div>
+                <div class="flex items-end justify-between bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/50">
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Total Spent</p>
+                        <p class="text-2xl font-black text-blue-600 dark:text-blue-400" id="insight-total">₹0</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-black dark:text-slate-200" id="insight-count">0</p>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase">Entries</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
             <div class="space-y-4">
                 <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-100 dark:border-slate-800">
                     <h3 class="text-xs font-bold uppercase text-slate-400 mb-4">Expense Distribution</h3>
@@ -109,6 +146,7 @@
             </div>
         </div>
 
+        <!-- Add Entry View -->
         <div id="view-add" class="hidden space-y-6">
             <h2 class="text-2xl font-black">Add Record</h2>
             <form id="expense-form" class="space-y-4">
@@ -130,7 +168,8 @@
                     </div>
 
                     <div id="dynamic-fields" class="hidden bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
-                        </div>
+                        <!-- Populated via JS based on category -->
+                    </div>
 
                     <div class="flex gap-4">
                         <div class="flex-1 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
@@ -154,16 +193,19 @@
             </form>
         </div>
 
+        <!-- History View -->
         <div id="view-history" class="hidden space-y-4">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-2xl font-black">Timeline</h2>
                 <span class="text-xs font-bold text-slate-400" id="history-count">0 items</span>
             </div>
             <div id="history-list" class="space-y-3">
-                </div>
+                <!-- Records populated here via JS -->
+            </div>
         </div>
     </main>
 
+    <!-- Bottom Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 glass border-t border-slate-200 dark:border-slate-800 px-6 py-4 flex justify-between items-center z-40">
         <button onclick="switchTab('dashboard')" id="btn-dash" class="relative flex flex-col items-center gap-1 tab-active">
             <i class="fa-solid fa-house-chimney text-xl"></i>
@@ -180,6 +222,7 @@
         </button>
     </nav>
 
+    <!-- Custom Animated Loading Overlay -->
     <div id="loading-overlay" class="fixed inset-0 bg-slate-50 dark:bg-slate-950 z-50 flex flex-col items-center justify-center transition-opacity duration-500">
         <div class="relative flex items-center justify-center mb-6 w-32 h-16">
             <div class="absolute left-4 top-8 w-3 h-3 bg-slate-300 dark:bg-slate-600 rounded-full animate-smoke-1 blur-[1px]"></div>
@@ -197,6 +240,7 @@
         <p class="font-black text-slate-400 tracking-widest uppercase text-xs animate-pulse">Loading Ignis Zeta...</p>
     </div>
 
+    <!-- Application Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -239,7 +283,6 @@
             
             document.getElementById(`view-${tab}`).classList.remove('hidden');
             
-            // Manage Bottom Nav Active States
             const btns = ['dash', 'hist'];
             btns.forEach(b => {
                 document.getElementById(`btn-${b}`).classList.remove('tab-active');
@@ -264,13 +307,13 @@
 
         categorySelect.addEventListener('change', (e) => {
             const val = e.target.value;
-            dynamicFields.innerHTML = ''; // clear old
+            dynamicFields.innerHTML = ''; 
             dynamicFields.classList.remove('hidden');
 
             if (val === 'wiper_change') {
                 dynamicFields.innerHTML = `
                     <label class="text-[10px] font-bold text-slate-400 uppercase">Wiper Position</label>
-                    <select id="dyn_wiper_pos" class="w-full bg-transparent font-bold py-2 outline-none dark:text-white appearance-none">
+                    <select id="dyn_wiper_pos" class="w-full bg-transparent font-bold py-2 outline-none dark:text-white appearance-none border-b border-slate-300 dark:border-slate-600">
                         <option value="Front Only" class="text-slate-800">Front Both</option>
                         <option value="Back Only" class="text-slate-800">Back/Rear Only</option>
                         <option value="Front and Back" class="text-slate-800">Front & Back (All)</option>
@@ -279,12 +322,32 @@
             } else if (val === 'tyre_change') {
                 dynamicFields.innerHTML = `
                     <label class="text-[10px] font-bold text-slate-400 uppercase">Number of Tyres Replaced</label>
-                    <input type="number" id="dyn_tyre_qty" min="1" max="5" value="4" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white">
+                    <input type="number" id="dyn_tyre_qty" min="1" max="5" value="4" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600">
                 `;
             } else {
                 dynamicFields.classList.add('hidden');
             }
         });
+
+        // Dashboard Insights Logic
+        const insightSelect = document.getElementById('insight-category');
+        insightSelect.addEventListener('change', updateInsights);
+
+        function updateInsights() {
+            const selectedCat = insightSelect.value;
+            let sum = 0;
+            let count = 0;
+
+            expensesData.forEach(item => {
+                if (item.category === selectedCat) {
+                    sum += item.cost || 0;
+                    count++;
+                }
+            });
+
+            document.getElementById('insight-total').innerText = `₹${sum.toLocaleString()}`;
+            document.getElementById('insight-count').innerText = count;
+        }
 
         // Data Management (Firebase)
         const init = async () => {
@@ -297,7 +360,6 @@
                     expensesData.sort((a, b) => new Date(b.date) - new Date(a.date));
                     updateUI();
                     
-                    // Hide loading overlay gracefully
                     const loader = document.getElementById('loading-overlay');
                     loader.classList.add('opacity-0');
                     setTimeout(() => loader.classList.add('hidden', 'pointer-events-none'), 500);
@@ -306,7 +368,6 @@
                 document.getElementById('expense-form').onsubmit = async (e) => {
                     e.preventDefault();
                     
-                    // Gather core data
                     const dataObj = {
                         category: categorySelect.value,
                         date: document.getElementById('date').value,
@@ -314,7 +375,6 @@
                         cost: parseFloat(document.getElementById('cost').value) || 0,
                     };
 
-                    // Check for dynamic inputs
                     if (dataObj.category === 'wiper_change') {
                         dataObj.details = document.getElementById('dyn_wiper_pos')?.value;
                     } else if (dataObj.category === 'tyre_change') {
@@ -343,16 +403,8 @@
         };
 
         const categoryEmojis = {
-            fuel: '⛽', 
-            wash: '🧼', 
-            service: '⚙️', 
-            tyre_pressure: '💨', 
-            wheel_alignment: '🔧', 
-            wheel_rotation: '🔄', 
-            tyre_change: '🛞', 
-            wiper_change: '🌧️', 
-            insurance: '🛡️', 
-            other: '📝'
+            fuel: '⛽', wash: '🧼', service: '⚙️', tyre_pressure: '💨', wheel_alignment: '🔧', 
+            wheel_rotation: '🔄', tyre_change: '🛞', wiper_change: '🌧️', insurance: '🛡️', other: '📝'
         };
 
         function updateUI() {
@@ -366,11 +418,9 @@
                 if(item.category === 'service') service += item.cost;
                 if(item.km > maxKm) maxKm = item.km;
 
-                // Create Mobile Cards for History
                 const emoji = categoryEmojis[item.category] || '📝';
                 let catName = item.category.replace('_', ' ');
                 
-                // Append sub-details if they exist (like "Front Only" for wipers)
                 if(item.details) {
                     catName += ` (${item.details})`;
                 }
@@ -404,76 +454,5 @@
             document.getElementById('stat-count').innerText = expensesData.length;
             document.getElementById('history-count').innerText = `${expensesData.length} entries`;
             
+            updateInsights(); // Refresh the insights dropdown tool
             updateCharts();
-        }
-
-        function updateCharts() {
-            const isDark = document.documentElement.classList.contains('dark');
-            const color = isDark ? '#94a3b8' : '#64748b';
-            const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
-            
-            // Category Chart Data
-            const catData = {};
-            expensesData.forEach(i => {
-                if(i.cost > 0) catData[i.category] = (catData[i.category] || 0) + i.cost;
-            });
-
-            if(categoryChart) categoryChart.destroy();
-            categoryChart = new Chart(document.getElementById('categoryChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(catData).map(k => k.replace('_', ' ').toUpperCase()),
-                    datasets: [{ 
-                        data: Object.values(catData), 
-                        backgroundColor: ['#3b82f6', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#64748b', '#0ea5e9', '#f43f5e'], 
-                        borderWidth: 0 
-                    }]
-                },
-                options: { 
-                    maintainAspectRatio: false, 
-                    plugins: { legend: { position: 'right', labels: { color, font: { weight: 'bold', size: 10 } } } }, 
-                    cutout: '70%' 
-                }
-            });
-
-            // Timeline Chart Data
-            const timeMap = {};
-            [...expensesData].reverse().forEach(item => {
-                if(item.cost > 0) {
-                    const d = new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                    timeMap[d] = (timeMap[d] || 0) + item.cost;
-                }
-            });
-
-            if(timelineChart) timelineChart.destroy();
-            timelineChart = new Chart(document.getElementById('timelineChart'), {
-                type: 'line',
-                data: {
-                    labels: Object.keys(timeMap),
-                    datasets: [{
-                        label: 'Spent',
-                        data: Object.values(timeMap),
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#3b82f6'
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { grid: { color: gridColor }, ticks: { color, font: {size: 10} } },
-                        x: { grid: { display: false }, ticks: { color, font: {size: 10} } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
-
-        // Start app
-        init();
-    </script>
-</body>
-</html>
