@@ -42,7 +42,6 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen pb-24">
 
-<!-- The Driving Car Theme Overlay -->
 <div id="theme-transition-overlay" class="fixed inset-0 z-[100] hidden pointer-events-none overflow-hidden">
     <div id="theme-sweep" class="absolute top-0 bottom-0 w-0 flex items-center">
         <div id="theme-car-wrapper" class="absolute top-1/2">
@@ -89,7 +88,6 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color
 </div>
 
 <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-    <!-- PRO STATS -->
     <div class="min-w-[140px] bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
         <p class="text-[10px] font-bold text-slate-400 uppercase">Health Score</p>
         <p class="text-lg font-black text-emerald-500" id="stat-health">100%</p>
@@ -112,7 +110,6 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color
     </div>
 </div>
 
-<!-- Category Insights Tool -->
 <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800">
     <div class="flex justify-between items-center mb-4">
         <h3 class="text-xs font-bold uppercase text-slate-400 flex items-center gap-2">
@@ -134,12 +131,12 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color
     </div>
     <div class="flex items-end justify-between bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/50">
         <div>
-            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Total Spent</p>
+            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1" id="insight-label-1">Total Spent</p>
             <p class="text-2xl font-black text-blue-600 dark:text-blue-400" id="insight-total">₹0</p>
         </div>
         <div class="text-right">
             <p class="text-sm font-black dark:text-slate-200" id="insight-count">0</p>
-            <p class="text-[10px] text-slate-400 font-bold uppercase">Entries</p>
+            <p class="text-[10px] text-slate-400 font-bold uppercase" id="insight-label-2">Entries</p>
         </div>
     </div>
 </div>
@@ -229,8 +226,7 @@ SAVE ENTRY
 </nav>
 
 <div id="loading-overlay" class="fixed inset-0 bg-slate-50 dark:bg-slate-950 z-50 flex flex-col items-center justify-center transition-opacity duration-500 pointer-events-none opacity-0 hidden">
-    <!-- Disabled standard loader as per working code -->
-</div>
+    </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -359,28 +355,84 @@ if (val === 'fuel') {
        <label class="text-[10px] font-bold text-slate-400 uppercase">Number of Tyres Replaced</label>
        <input type="number" id="dyn_tyre_qty" min="1" max="5" value="4" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600">
    `;
+} else if (val === 'tyre_pressure') {
+    // NEW: Tyre Pressure Input Field
+    dynamicFields.innerHTML = `
+       <label class="text-[10px] font-bold text-slate-400 uppercase">Tyre Pressure (PSI)</label>
+       <input type="number" id="dyn_tyre_psi" placeholder="e.g. 32" class="w-full bg-transparent font-bold py-1 outline-none dark:text-white border-b border-slate-300 dark:border-slate-600">
+   `;
 } else {
     dynamicFields.classList.add('hidden');
 }
 });
 
-// --- CATEGORY INSIGHTS ---
+// --- CATEGORY INSIGHTS WITH PUC & TYRE PRESSURE LOGIC ---
 const insightSelect = document.getElementById('insight-category');
 insightSelect.addEventListener('change', updateInsights);
 
 function updateInsights() {
     const selectedCat = insightSelect.value;
     let sum = 0, count = 0;
+    let latestDate = null;
+    let latestDetails = null;
     
+    // Process Data
     expensesData.forEach(item => {
         if (item.category === selectedCat) {
             sum += item.cost || 0;
             count++;
+            
+            // Track the most recent entry for special category displays
+            let itemDate = new Date(item.date).getTime();
+            if (!latestDate || itemDate > latestDate) {
+                latestDate = itemDate;
+                latestDetails = item.details;
+            }
         }
     });
-    
-    document.getElementById('insight-total').innerText = `₹${sum.toLocaleString()}`;
-    document.getElementById('insight-count').innerText = count;
+
+    // Grab DOM Elements
+    const lbl1 = document.getElementById('insight-label-1');
+    const lbl2 = document.getElementById('insight-label-2');
+    const val1 = document.getElementById('insight-total');
+    const val2 = document.getElementById('insight-count');
+
+    // Dynamic Display Logic
+    if (selectedCat === 'puc' && latestDate) {
+        lbl1.innerText = "Days Remaining";
+        lbl2.innerText = "Last Taken";
+        
+        const now = new Date().getTime();
+        // 365 Days validity
+        const expiryDate = latestDate + (365 * 24 * 60 * 60 * 1000);
+        const daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
+        if (daysLeft > 0) {
+            val1.innerText = daysLeft;
+            val1.className = "text-2xl font-black text-blue-600 dark:text-blue-400";
+        } else {
+            val1.innerText = "Expired";
+            val1.className = "text-2xl font-black text-red-600 dark:text-red-400";
+        }
+        val2.innerText = new Date(latestDate).toLocaleDateString();
+
+    } else if (selectedCat === 'tyre_pressure' && latestDate && latestDetails) {
+        lbl1.innerText = "Last Pressure";
+        lbl2.innerText = "Last Checked";
+        
+        val1.innerText = latestDetails;
+        val1.className = "text-2xl font-black text-blue-600 dark:text-blue-400";
+        val2.innerText = new Date(latestDate).toLocaleDateString();
+
+    } else {
+        // Standard View
+        lbl1.innerText = "Total Spent";
+        lbl2.innerText = "Entries";
+        val1.className = "text-2xl font-black text-blue-600 dark:text-blue-400";
+        
+        val1.innerText = `₹${sum.toLocaleString()}`;
+        val2.innerText = count;
+    }
 }
 
 
@@ -418,6 +470,10 @@ if (dataObj.category === 'fuel') {
     dataObj.details = document.getElementById('dyn_wiper_pos')?.value;
 } else if (dataObj.category === 'tyre_change') {
     dataObj.details = document.getElementById('dyn_tyre_qty')?.value + " Tyres";
+} else if (dataObj.category === 'tyre_pressure') {
+    // NEW: Save Tyre PSI details
+    const psi = document.getElementById('dyn_tyre_psi')?.value;
+    if (psi) dataObj.details = psi + " PSI";
 }
 
 await addDoc(colRef, dataObj);
@@ -572,7 +628,6 @@ document.getElementById('total-spent').innerText = `₹${total.toLocaleString()}
 document.getElementById('stat-odo').innerText = `${maxKm.toLocaleString()} km`;
 document.getElementById('stat-fuel').innerText = `₹${fuel.toLocaleString()}`;
 document.getElementById('stat-service').innerText = `₹${service.toLocaleString()}`;
-document.getElementById('stat-avg').innerText = `₹${avgCost.toLocaleString()}`;
 document.getElementById('stat-count').innerText = expensesData.length;
 document.getElementById('history-count').innerText = `${expensesData.length} entries`;
 
